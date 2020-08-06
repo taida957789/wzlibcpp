@@ -2,7 +2,7 @@
 
 void *file_read_m(const wchar_t *path, unsigned int *len, unsigned int m) {
     if (path) {
-        FILE *fp = 0;
+        FILE *fp = nullptr;
 
         fopen_p(fp, path, L"rb");
         if (fp) {

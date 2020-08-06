@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include "NumTypes.hpp"
 
 class WzNode;
 
@@ -16,24 +17,30 @@ public:
 
     virtual void AddChild(const std::wstring &name, WzNode *node);
 
-    virtual const WzNodeMap &GetChilds() const;
+    virtual const WzNodeMap& GetChilds() const;
 
+    // todo: deprecate
     virtual void Delete();
 
+    // todo: deprecate
     virtual void Free();
 
+    // todo: deprecate
     virtual bool FreeChild(const std::wstring &name);
 
+    // todo: deprecate
     virtual void FreeChilds();
 
     virtual WzNode *GetParent();
 
+    [[maybe_unused]]
     WzNodeMap::iterator begin() {
-        return m_Childs.begin();
+        return children.begin();
     }
 
+    [[maybe_unused]]
     WzNodeMap::iterator end() {
-        return m_Childs.end();
+        return children.end();
     }
 
 public:
@@ -43,8 +50,8 @@ protected:
     virtual ~WzNode();
 
 protected:
-    WzNode *m_pParent;
-    WzNodeMap m_Childs;
+    WzNode* parent;
+    WzNodeMap children;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -54,18 +61,22 @@ public:
 
     void Set(bool img, int size, int checksum, unsigned int offset);
 
-    unsigned int GetOffset() const;
+    [[nodiscard]]
+    u32 GetOffset() const;
 
+    [[nodiscard]]
     bool IsImage() const;
 
 public:
     static WzDirectory *New();
 
 private:
-    bool m_bImage;
-    int m_Size;
-    int m_Checksum;
-    unsigned int m_Offset;
+    bool image;
+    [[maybe_unused]]
+    int size;
+    [[maybe_unused]]
+    int checksum;
+    unsigned int offset;
 };
 
 //////////////////////////////////////////////////////////////////////////

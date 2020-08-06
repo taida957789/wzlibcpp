@@ -8,11 +8,10 @@ include(F:/vcpkg/scripts/buildsystems/vcpkg.cmake)
 find_package(ZLIB REQUIRED)
 
 include_directories(
-        .
+        include
         ${ZLIB_INCLUDE_DIR})
 
-file(GLOB SOURCE_FILES ./*.cpp)
+file(GLOB SOURCE_FILES src/*.cpp)
 
 add_library(wzlibcpp ${SOURCE_FILES})
 target_link_libraries(ZLIB::ZLIB)
-

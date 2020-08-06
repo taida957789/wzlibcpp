@@ -1,7 +1,7 @@
 #ifndef __FileMapping_h__
 #define __FileMapping_h__
 
-#include <windows.h>
+#include <Windows.h>
 
 #ifdef _MSC_VER
 	typedef __int64 int64;

@@ -1,5 +1,5 @@
 #include "FileMapping.h"
-#include <assert.h>
+#include <cassert>
 
 FileMapping::FileMapping() : m_hFileMap(0), m_qwFileSize(0), m_dwGran(0), m_dwBlockBytes(0), m_pMapped(0), m_qwMappedOffset(0), m_qwMappedBlockSize(0)
 {
@@ -7,7 +7,6 @@ FileMapping::FileMapping() : m_hFileMap(0), m_qwFileSize(0), m_dwGran(0), m_dwBl
 	m_ReadCount = 0;
 #endif
 
-	// ���ϵͳ��������
 	SYSTEM_INFO sysinfo;
 	GetSystemInfo(&sysinfo);
 	m_dwGran = sysinfo.dwAllocationGranularity;
@@ -23,27 +22,21 @@ bool FileMapping::Open(const wchar_t * path, ReadHint rhint)
 {
 	if(path)
 	{
-		// �ر�ԭ���ļ�
 		Close();
 
-		// ��һ�����ļ�
 		HANDLE hFile = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING,
 			rhint == RANDOM ? FILE_FLAG_RANDOM_ACCESS : FILE_FLAG_SEQUENTIAL_SCAN,
 			0);
 
-		// �����ʧ��, �򷵻�
 		if(hFile == INVALID_HANDLE_VALUE) return false;
 
-		// ����ļ�����
 		DWORD dwFileSizeHigh = 0;
 		m_qwFileSize = GetFileSize(hFile, &dwFileSizeHigh);
 		m_qwFileSize |= (((uint64)dwFileSizeHigh) << 32);
 
-		// �����ļ�ӳ��
 		m_hFileMap = CreateFileMappingW(hFile, 0, PAGE_READONLY, 0, 0, 0);
 		CloseHandle(hFile);
 
-		// ӳ��ʧ���򷵻�
 		if(m_hFileMap == 0) return false;
 
 		return true;
@@ -77,7 +70,6 @@ void * FileMapping::Read(uint64 addr, size_t len, size_t * revlen)
 
 	void * pRetData = 0;
 
-	// ����Ѿ�����ӳ��, ���ҷ��Ϸ�Χ, ��ֱ�ӷ���
 	if(m_pMapped &&
 		addr >= m_qwMappedOffset &&
 		addr + len <= m_qwMappedOffset + m_qwMappedBlockSize)
@@ -86,12 +78,9 @@ void * FileMapping::Read(uint64 addr, size_t len, size_t * revlen)
 	}
 	else
 	{
-		// �����ӳ�������, ����ӳ��
 		Unmap();
 
-		// addr ����ǰ��Ҫӳ���ʵ�ʵ�ַ�Ĳ�
 		uint64 qwDataOffset = addr % m_dwGran;
-		// ��ǰ��Ҫӳ���ʵ�ʵ�ַ
 		m_qwMappedOffset = addr - qwDataOffset;
 
 		m_qwMappedBlockSize = m_qwFileSize - m_qwMappedOffset;

@@ -5,17 +5,17 @@
 #include "AES.h"
 
 //////////////////////////////////////////////////////////////////////////
-static const unsigned char g_AESKey1[] = {
+static const unsigned char gAesKey1[] = {
         0x13, 0x52, 0x2A, 0x5B, 0x08, 0x02, 0x10, 0x60, 0x06, 0x02, 0x43, 0x0F, 0xB4, 0x4B, 0x35, 0x05,
         0x1B, 0x0A, 0x5F, 0x09, 0x0F, 0x50, 0x0C, 0x1B, 0x33, 0x55, 0x01, 0x09, 0x52, 0xDE, 0xC7, 0x1E
 };
 
-static const unsigned char g_AESKey2[] = {
+static const unsigned char gAesKey2[] = {
         0x13, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0xB4, 0x00, 0x00, 0x00,
         0x1B, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x33, 0x00, 0x00, 0x00, 0x52, 0x00, 0x00, 0x00
 };
 
-static const unsigned char g_ShuffleKey[] = {
+static const unsigned char gShuffleKey[] = {
         0xEC, 0x3F, 0x77, 0xA4, 0x45, 0xD0, 0x71, 0xBF, 0xB7, 0x98, 0x20, 0xFC, 0x4B, 0xE9, 0xB3, 0xE1,
         0x5C, 0x22, 0xF7, 0x0C, 0x44, 0x1B, 0x81, 0xBD, 0x63, 0x8D, 0xD4, 0xC3, 0xF2, 0x10, 0x19, 0xE0,
         0xFB, 0xA1, 0x6E, 0x66, 0xEA, 0xAE, 0xD6, 0xCE, 0x06, 0x18, 0x4E, 0xEB, 0x78, 0x95, 0xDB, 0xBA,
@@ -34,27 +34,27 @@ static const unsigned char g_ShuffleKey[] = {
         0x84, 0x7F, 0x61, 0x1E, 0xCF, 0xC5, 0xD1, 0x56, 0x3D, 0xCA, 0xF4, 0x05, 0xC6, 0xE5, 0x08, 0x49
 };
 
-static const unsigned char g_DefaultKey[] = {
+static const unsigned char gDefaultKey[] = {
         0xC6, 0x50, 0x53, 0xF2, 0xA8, 0x42, 0x9D, 0x7F, 0x77, 0x09, 0x1D, 0x26, 0x42, 0x53, 0x88, 0x7C
 };
 
-static const unsigned char g_ShuffleConstant[] = {
+static const unsigned char gShuffleConstant[] = {
         0xF2, 0x53, 0x50, 0xC6
 };
 
-static const unsigned int g_OffsetKey = 0x581C3F6D;
+static const unsigned int gOffsetKey = 0x581C3F6D;
 
-static const unsigned int g_HeaderMagic = 0x31474B50;
+static const unsigned int gHeaderMagic = 0x31474B50;
 //////////////////////////////////////////////////////////////////////////
 
-static unsigned char g_WzKey[0x10000];
+static unsigned char gWzKey[0x10000];
 
 //////////////////////////////////////////////////////////////////////////
 static void WzDecryptString(const std::wstring &stringToDecrypt, std::wstring &outputString) {
     assert(outputString.size() >= stringToDecrypt.size());
     size_t szToDec = stringToDecrypt.size();
     for (size_t i = 0; i < szToDec; i++)
-        outputString[i] = stringToDecrypt[i] ^ *(wchar_t *) (g_WzKey + 2 * i);
+        outputString[i] = stringToDecrypt[i] ^ *(wchar_t *) (gWzKey + 2 * i);
 }
 
 static void WzReadString(BinReader &reader, std::wstring &outputString) {
@@ -81,7 +81,7 @@ static void WzReadString(BinReader &reader, std::wstring &outputString) {
         for (int i = 0; i < length; i++) {
             wchar_t encryptedChar = reader.ReadUInt16();
             encryptedChar ^= mask;
-            encryptedChar ^= *(wchar_t *) (g_WzKey + 2 * i);
+            encryptedChar ^= *(wchar_t *) (gWzKey + 2 * i);
             outputString.push_back(encryptedChar);
             mask++;
         }
@@ -100,7 +100,7 @@ static void WzReadString(BinReader &reader, std::wstring &outputString) {
         for (int i = 0; i < length; i++) {
             unsigned char encryptedChar = reader.ReadUInt8();
             encryptedChar ^= mask;
-            encryptedChar ^= g_WzKey[i];
+            encryptedChar ^= gWzKey[i];
             outputString.push_back((wchar_t) encryptedChar);
             mask++;
         }
@@ -166,7 +166,7 @@ static unsigned int WzReadOffset(BinReader &reader, const WzFileDesc &fdesc) {
     unsigned int offset = (unsigned int) reader.GetPosition();
     offset = ~(offset - fdesc.m_Start);// ^ 0xFFFFFFFF;
     offset *= fdesc.m_Hash;
-    offset -= g_OffsetKey;
+    offset -= gOffsetKey;
     offset = (offset << (offset & 0x1F)) | (offset >> (32 - (offset & 0x1F)));
     unsigned int encryptedOffset = reader.ReadUInt32();
     offset ^= encryptedOffset;
@@ -201,7 +201,7 @@ static WzCanvas WzParseCanvasProperty(BinReader &reader) {
     canvas.m_Offset = reader.GetPosition();
 
     unsigned short header = reader.ReadUInt16();
-// �������� zlib ѹ�����ݵ�ħ��
+
     if (header != 0x9C78 && header != 0xDA78) {
         canvas.m_Encrypted = true;
     }
@@ -243,7 +243,7 @@ static void *WzDeflateCanvas(FileMapping &fm, const WzCanvas &canvas) {
         while (reader.GetPosition() < endOfCanvas) {
             blockSize = reader.ReadInt32();
             for (int i = 0; i < blockSize; i++) {
-                dataStream.push_back(reader.ReadUInt8() ^ g_WzKey[i]);
+                dataStream.push_back(reader.ReadUInt8() ^ gWzKey[i]);
             }
         }
 
@@ -576,11 +576,11 @@ void WzGenKeys(const unsigned char *IV) {
     }
 
     AESGen.SetParameters(256, 128);
-    AESGen.StartEncryption(g_AESKey2);
-    AESGen.EncryptBlock(BigIV, g_WzKey);
+    AESGen.StartEncryption(gAesKey2);
+    AESGen.EncryptBlock(BigIV, gWzKey);
 
     for (int i = 16; i < 0x10000; i += 16) {
-        AESGen.EncryptBlock(g_WzKey + i - 16, g_WzKey + i);
+        AESGen.EncryptBlock(gWzKey + i - 16, gWzKey + i);
     }
 }
 
@@ -604,7 +604,7 @@ void WzParseListFile(BinReader &reader, std::vector<std::wstring> &strList) {
 
 bool WzParseFile(BinReader &reader, WzFileDesc &fdesc, WzNode *root) {
     unsigned int hdr = reader.ReadUInt32();
-    if (hdr != g_HeaderMagic) return false;
+    if (hdr != gHeaderMagic) return false;
     uint64 fsize = reader.ReadUInt64();
     unsigned int fstart = reader.ReadUInt32();
 
