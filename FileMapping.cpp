@@ -1,8 +1,3 @@
-// 110126
-// 120111
-// 120112
-// 120805
-
 #include "FileMapping.h"
 #include <assert.h>
 
@@ -12,7 +7,7 @@ FileMapping::FileMapping() : m_hFileMap(0), m_qwFileSize(0), m_dwGran(0), m_dwBl
 	m_ReadCount = 0;
 #endif
 
-	// »ñµÃÏµÍ³·ÖÅäÁ£¶È
+	// ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	SYSTEM_INFO sysinfo;
 	GetSystemInfo(&sysinfo);
 	m_dwGran = sysinfo.dwAllocationGranularity;
@@ -28,27 +23,27 @@ bool FileMapping::Open(const wchar_t * path, ReadHint rhint)
 {
 	if(path)
 	{
-		// ¹Ø±ÕÔ­ÓÐÎÄ¼þ
+		// ï¿½Ø±ï¿½Ô­ï¿½ï¿½ï¿½Ä¼ï¿½
 		Close();
 
-		// ´ò¿ªÒ»¸öÐÂÎÄ¼þ
+		// ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
 		HANDLE hFile = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING,
 			rhint == RANDOM ? FILE_FLAG_RANDOM_ACCESS : FILE_FLAG_SEQUENTIAL_SCAN,
 			0);
 
-		// Èç¹û´ò¿ªÊ§°Ü, Ôò·µ»Ø
+		// ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½, ï¿½ò·µ»ï¿½
 		if(hFile == INVALID_HANDLE_VALUE) return false;
 
-		// »ñµÃÎÄ¼þ³¤¶È
+		// ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
 		DWORD dwFileSizeHigh = 0;
 		m_qwFileSize = GetFileSize(hFile, &dwFileSizeHigh);
 		m_qwFileSize |= (((uint64)dwFileSizeHigh) << 32);
 
-		// ´´½¨ÎÄ¼þÓ³Éä
+		// ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Ó³ï¿½ï¿½
 		m_hFileMap = CreateFileMappingW(hFile, 0, PAGE_READONLY, 0, 0, 0);
 		CloseHandle(hFile);
 
-		// Ó³ÉäÊ§°ÜÔò·µ»Ø
+		// Ó³ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò·µ»ï¿½
 		if(m_hFileMap == 0) return false;
 
 		return true;
@@ -82,7 +77,7 @@ void * FileMapping::Read(uint64 addr, size_t len, size_t * revlen)
 
 	void * pRetData = 0;
 
-	// Èç¹ûÒÑ¾­´æÔÚÓ³Éä, ²¢ÇÒ·ûºÏ·¶Î§, ÔòÖ±½Ó·µ»Ø
+	// ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½Ó³ï¿½ï¿½, ï¿½ï¿½ï¿½Ò·ï¿½ï¿½Ï·ï¿½Î§, ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½
 	if(m_pMapped &&
 		addr >= m_qwMappedOffset &&
 		addr + len <= m_qwMappedOffset + m_qwMappedBlockSize)
@@ -91,12 +86,12 @@ void * FileMapping::Read(uint64 addr, size_t len, size_t * revlen)
 	}
 	else
 	{
-		// Èç¹ûÓÐÓ³ÉäµÄÊý¾Ý, Ôò½â³ýÓ³Éä
+		// ï¿½ï¿½ï¿½ï¿½ï¿½Ó³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½Ó³ï¿½ï¿½
 		Unmap();
 
-		// addr ¸úµ±Ç°ÐèÒªÓ³ÉäµÄÊµ¼ÊµØÖ·µÄ²î
+		// addr ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ÒªÓ³ï¿½ï¿½ï¿½Êµï¿½Êµï¿½Ö·ï¿½Ä²ï¿½
 		uint64 qwDataOffset = addr % m_dwGran;
-		// µ±Ç°ÐèÒªÓ³ÉäµÄÊµ¼ÊµØÖ·
+		// ï¿½ï¿½Ç°ï¿½ï¿½ÒªÓ³ï¿½ï¿½ï¿½Êµï¿½Êµï¿½Ö·
 		m_qwMappedOffset = addr - qwDataOffset;
 
 		m_qwMappedBlockSize = m_qwFileSize - m_qwMappedOffset;

@@ -1,5 +1,3 @@
-// 120111
-
 #ifndef __FileMapping_h__
 #define __FileMapping_h__
 

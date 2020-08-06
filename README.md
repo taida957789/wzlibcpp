@@ -1,2 +1,8 @@
 # WzLib
-Another MapleStory .wz file parser written in C++
+more easier, clear api and cross-platform
+
+# Status
+
+⬜️ modern api
+
+☑️ cross-platform

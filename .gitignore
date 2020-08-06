@@ -1,0 +1,11 @@
+./vs
+/Debug
+/Release
+/x64
+/ZLIB
+/cmake-build-debug
+
+*.sln
+*.vcproj
+*.vcxproj
+*.vcxproj.*
