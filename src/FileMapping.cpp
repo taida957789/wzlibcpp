@@ -18,7 +18,7 @@ FileMapping::~FileMapping()
 	Close();
 }
 
-bool FileMapping::Open(const wchar_t * path, ReadHint rhint)
+bool FileMapping::Open(const wchar_t*  path, ReadHint rhint)
 {
 	if(path)
 	{
@@ -64,14 +64,14 @@ void FileMapping::Unmap()
 	}
 }
 
-void * FileMapping::Read(uint64 addr, size_t len, size_t * revlen)
+void*  FileMapping::Read(uint64 addr, size_t len, size_t*  revlen)
 {
 	if(addr >= m_qwFileSize) return 0;
 
-	void * pRetData = 0;
+	void*  pRetData = 0;
 
 	if(m_pMapped &&
-		addr >= m_qwMappedOffset &&
+	    addr >= m_qwMappedOffset &&
 		addr + len <= m_qwMappedOffset + m_qwMappedBlockSize)
 	{
 		pRetData = (char*)m_pMapped + (addr - m_qwMappedOffset);

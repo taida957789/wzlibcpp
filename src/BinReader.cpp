@@ -1,6 +1,6 @@
 #include "BinReader.h"
 
-BinReader::BinReader(FileMapping &fm)
+BinReader::BinReader(FileMapping& fm)
         : m_FileMapping(fm), m_Pointer(0), m_bError(false) {
 #ifdef _DEBUG
     m_ReadCount = 0;
@@ -16,14 +16,14 @@ _type BinReader::Read##_name()\
         m_ReadCount++;\
         size_t szType = sizeof(_type);\
         size_t realSz = 0;\
-        void * pData = m_FileMapping.Read(m_Pointer, szType, &realSz);\
+        void*  pData = m_FileMapping.Read(m_Pointer, szType, &realSz);\
         if(!pData || realSz != szType)\
         {\
             m_bError = true;\
             return 0;\
         }\
         m_Pointer += szType;\
-        return *(_type*)pData;\
+        return* (_type*)pData;\
     }\
     return 0;\
 }
@@ -35,14 +35,14 @@ _type BinReader::Read##_name()\
     {\
         size_t szType = sizeof(_type);\
         size_t realSz = 0;\
-        void * pData = m_FileMapping.Read(m_Pointer, szType, &realSz);\
+        void*  pData = m_FileMapping.Read(m_Pointer, szType, &realSz);\
         if(!pData || realSz != szType)\
         {\
             m_bError = true;\
             return 0;\
         }\
         m_Pointer += szType;\
-        return *(_type*)pData;\
+        return* (_type*)pData;\
     }\
     return 0;\
 }
@@ -68,7 +68,7 @@ DefReadFunc(Single, float);
 
 DefReadFunc(Double, double);
 
-void BinReader::ReadWstring(std::wstring &str) {
+void BinReader::ReadWstring(std::wstring& str) {
     while (!IsEOF()) {
         wchar_t ch = ReadUInt16();
         if (!ch) break;
@@ -76,7 +76,7 @@ void BinReader::ReadWstring(std::wstring &str) {
     }
 }
 
-void BinReader::ReadAstring(std::string &str) {
+void BinReader::ReadAstring(std::string& str) {
     while (!IsEOF()) {
         char ch = ReadInt8();
         if (!ch) break;
@@ -104,6 +104,6 @@ void BinReader::Reset() {
     m_bError = false;
 }
 
-FileMapping &BinReader::GetFileMapping() const {
+FileMapping& BinReader::GetFileMapping() const {
     return m_FileMapping;
 }

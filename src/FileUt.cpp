@@ -45,7 +45,7 @@ char *file_read_str(const wchar_t *path) {
 
 bool file_save(const wchar_t *path, const void *buf, unsigned int len) {
     if (path && buf && len) {
-        FILE *fp = 0;
+        FILE *fp = nullptr;
 
         fopen_p(fp, path, L"wb");
         if (fp) {

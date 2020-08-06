@@ -6,7 +6,7 @@
 
 class BinReader {
 public:
-    BinReader(FileMapping &fm);
+    BinReader(FileMapping& fm);
 
     char ReadInt8();
 
@@ -28,9 +28,9 @@ public:
 
     double ReadDouble();
 
-    void ReadWstring(std::wstring &str);
+    void ReadWstring(std::wstring& str);
 
-    void ReadAstring(std::string &str);
+    void ReadAstring(std::string& str);
 
     bool IsEOF() const;
 
@@ -40,10 +40,10 @@ public:
 
     void Reset();
 
-    FileMapping &GetFileMapping() const;
+    FileMapping& GetFileMapping() const;
 
 private:
-    FileMapping &m_FileMapping;
+    FileMapping& m_FileMapping;
     uint64 m_Pointer;
     bool m_bError;
 

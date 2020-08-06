@@ -73,14 +73,14 @@ const unsigned char WzKMSKeyIV[4] =
                 0xB9, 0x7D, 0x63, 0xE9
         };
 
-void WzGenKeys(const unsigned char *IV);
+void WzGenKeys(const unsigned char* IV);
 
-void WzParseListFile(BinReader &reader, std::vector<std::wstring> &strList);
+void WzParseListFile(BinReader& reader, std::vector<std::wstring> &strList);
 
-bool WzParseFile(BinReader &reader, WzFileDesc &fdesc, WzNode *root);
+bool WzParseFile(BinReader& reader, WzFileDesc& fdesc, WzNode* root);
 
-bool WzParseImage(BinReader &reader, const WzDirectory *pimg, WzNode *root);
+bool WzParseImage(BinReader& reader, const WzDirectory* pimg, WzNode* root);
 
-void *WzRebuildCanvas(FileMapping &fm, const WzCanvas &canvas, size_t &szBuf, size_t &bpp);
+void* WzRebuildCanvas(FileMapping& fm, const WzCanvas& canvas, size_t& szBuf, size_t& bpp);
 
 #endif

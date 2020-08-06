@@ -34,28 +34,28 @@
 #  define fopen_p(_fptr, _path, _mode)    (_wfopen_s(&(_fptr), _path, _mode))
 #endif
 
-inline void *ut_alloc(size_t n) {
+inline void* ut_alloc(size_t n) {
     if (n) return malloc(n);
     return 0;
 }
 
-inline void *ut_realloc(void *p, size_t n) {
+inline void* ut_realloc(void* p, size_t n) {
     if (n) return realloc(p, n);
     else if (p) free(p);
     return 0;
 }
 
-void *file_read_m(const wchar_t *path, unsigned int *len, unsigned int m);
+void* file_read_m(const wchar_t* path, unsigned int* len, unsigned int m);
 
-void *file_read(const wchar_t *path, unsigned int *len);
+void* file_read(const wchar_t* path, unsigned int* len);
 
-char *file_read_str(const wchar_t *path);
+char* file_read_str(const wchar_t* path);
 
-bool file_save(const wchar_t *path, const void *buf, unsigned int len);
+bool file_save(const wchar_t* path, const void* buf, unsigned int len);
 
-bool file_save_a(const char *path, const void *buf, unsigned int len);
+bool file_save_a(const char* path, const void* buf, unsigned int len);
 
-void file_free(void *buf);
+void file_free(void* buf);
 
 
 #endif

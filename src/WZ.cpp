@@ -549,7 +549,7 @@ static bool WzParseDirectory(BinReader &reader, const WzFileDesc &fdesc, WzNode 
                  cit != it->second.end();
                  cit++) {
                 WzNode *pnode = *cit;
-                WzDirectory *pdir = dynamic_cast<WzDirectory *>(pnode);
+                WzDirectory *pdir = dynamic_cast<WzDirectory*>(pnode);
 
                 if (pdir) {
                     if (pdir->IsImage()) {

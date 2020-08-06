@@ -1,9 +1,10 @@
-./vs
+/.vs
 /Debug
 /Release
 /x64
 /ZLIB
 /cmake-build-debug
+/.idea
 
 *.sln
 *.vcproj

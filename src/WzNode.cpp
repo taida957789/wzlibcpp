@@ -6,13 +6,13 @@ WzNode::WzNode() : parent(0) {}
 
 WzNode::~WzNode() {}
 
-void WzNode::AddChild(const std::wstring &name, WzNode *node) {
+void WzNode::AddChild(const std::wstring& name, WzNode* node) {
     assert(node);
     children[name].push_back(node);
     node->parent = this;
 }
 
-const WzNodeMap &WzNode::GetChilds() const {
+const WzNodeMap& WzNode::GetChilds() const {
     return children;
 }
 
@@ -34,7 +34,7 @@ void WzNode::Free() {
     Delete();
 }
 
-bool WzNode::FreeChild(const std::wstring &name) {
+bool WzNode::FreeChild(const std::wstring& name) {
     WzNodeMap::iterator it = children.find(name);
     if (it != children.end()) {
         for (WzNodeList::iterator cit = it->second.begin();
@@ -62,22 +62,22 @@ void WzNode::FreeChilds() {
     children.clear();
 }
 
-WzNode *WzNode::GetParent() {
+WzNode* WzNode::GetParent() {
     return parent;
 }
 
-WzNode *WzNode::New() {
+WzNode* WzNode::New() {
     return new WzNode();
 }
 
 //////////////////////////////////////////////////////////////////////////
 WzDirectory::WzDirectory() : image(false), size(0), checksum(0), offset(0) {}
 
-void WzDirectory::Set(bool img, int size, int checksum, unsigned int offset) {
+void WzDirectory::Set(bool img, int new_size, int new_checksum, unsigned int new_offset) {
     image = img;
-    size = size;
-    checksum = checksum;
-    offset = offset;
+    size = new_size;
+    checksum = new_checksum;
+    offset = new_offset;
 }
 
 unsigned int WzDirectory::GetOffset() const {
@@ -88,6 +88,6 @@ bool WzDirectory::IsImage() const {
     return image;
 }
 
-WzDirectory *WzDirectory::New() {
+WzDirectory* WzDirectory::New() {
     return new WzDirectory();
 }

@@ -23,11 +23,11 @@ public:
 	FileMapping();
 	~FileMapping();
 
-	bool Open(const wchar_t * path, ReadHint rhint = RANDOM);
+	bool Open(const wchar_t*  path, ReadHint rhint = RANDOM);
 	void Close();
 	void Unmap();
 
-	void * Read(uint64 addr, size_t len, size_t * revlen);
+	void*  Read(uint64 addr, size_t len, size_t*  revlen);
 
 	size_t GetBlockBytes() const;
 	uint64 GetFileLen() const;
@@ -39,7 +39,7 @@ private:
 	size_t	m_dwGran;
 	size_t	m_dwBlockBytes;
 
-	void	*m_pMapped;
+	void* m_pMapped;
 	uint64	m_qwMappedOffset;
 	uint64	m_qwMappedBlockSize;
 

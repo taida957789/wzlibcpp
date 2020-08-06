@@ -4,47 +4,40 @@
 #include <map>
 #include <vector>
 #include <string>
-#include "NumTypes.hpp"
 
 class WzNode;
 
-typedef std::vector<WzNode *> WzNodeList;
+typedef std::vector<WzNode*> WzNodeList;
 typedef std::map<std::wstring, WzNodeList> WzNodeMap;
 
 class WzNode {
 public:
     WzNode();
 
-    virtual void AddChild(const std::wstring &name, WzNode *node);
+    virtual void AddChild(const std::wstring& name, WzNode* node);
 
     virtual const WzNodeMap& GetChilds() const;
 
-    // todo: deprecate
     virtual void Delete();
 
-    // todo: deprecate
     virtual void Free();
 
-    // todo: deprecate
-    virtual bool FreeChild(const std::wstring &name);
+    virtual bool FreeChild(const std::wstring& name);
 
-    // todo: deprecate
     virtual void FreeChilds();
 
-    virtual WzNode *GetParent();
+    virtual WzNode* GetParent();
 
-    [[maybe_unused]]
     WzNodeMap::iterator begin() {
         return children.begin();
     }
 
-    [[maybe_unused]]
     WzNodeMap::iterator end() {
         return children.end();
     }
 
 public:
-    static WzNode *New();
+    static WzNode* New();
 
 protected:
     virtual ~WzNode();
@@ -59,22 +52,18 @@ class WzDirectory : public WzNode {
 public:
     WzDirectory();
 
-    void Set(bool img, int size, int checksum, unsigned int offset);
+    void Set(bool img, int new_size, int new_checksum, unsigned int new_offset);
 
-    [[nodiscard]]
-    u32 GetOffset() const;
+    unsigned int GetOffset() const;
 
-    [[nodiscard]]
     bool IsImage() const;
 
 public:
-    static WzDirectory *New();
+    static WzDirectory* New();
 
 private:
     bool image;
-    [[maybe_unused]]
     int size;
-    [[maybe_unused]]
     int checksum;
     unsigned int offset;
 };
@@ -89,7 +78,7 @@ public:
         m_Data = data;
     }
 
-    const T &Get() const {
+    const T& Get() const {
         return m_Data;
     }
 
