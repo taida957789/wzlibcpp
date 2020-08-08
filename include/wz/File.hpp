@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Node.h"
+#include "Node.hpp"
 #include "Reader.hpp"
-#include "WZ.h"
+#include "Wz.hpp"
 
 namespace wz {
     class File final {

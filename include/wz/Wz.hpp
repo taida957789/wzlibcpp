@@ -2,7 +2,7 @@
 #define __WZ_h__
 
 #include "BinReader.h"
-#include "Node.h"
+#include "Node.hpp"
 #include "Directory.hpp"
 #include "Types.hpp"
 

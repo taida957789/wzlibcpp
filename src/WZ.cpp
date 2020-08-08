@@ -4,7 +4,7 @@
 #include <wz/Property.hpp>
 #include <wz/Directory.hpp>
 #include <wz/Keys.hpp>
-#include "wz/WZ.h"
+#include "wz/Wz.hpp"
 #include "AES.h"
 
 //////////////////////////////////////////////////////////////////////////

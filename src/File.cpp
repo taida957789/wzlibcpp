@@ -1,4 +1,4 @@
-#include <wz/WZ.h>
+#include <wz/Wz.hpp>
 #include <wz/Directory.hpp>
 #include <cassert>
 #include <AES.h>

@@ -1,5 +1,5 @@
 #include <cassert>
-#include "wz/Node.h"
+#include "wz/Node.hpp"
 #include "wz/Property.hpp"
 
 wz::Node::Node() : parent(nullptr), reader(nullptr)  {}

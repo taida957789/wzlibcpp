@@ -23,8 +23,8 @@ more easier, cleaner api and support cross-platform
 #include <pystring.h>
 #include <algorithm>
 
-#include <wz/WZ.h>
-#include <wz/Node.h>
+#include <wz/Wz.hpp>
+#include <wz/Node.hpp>
 #include <wz/File.hpp>
 #include <wz/Directory.hpp>
 
