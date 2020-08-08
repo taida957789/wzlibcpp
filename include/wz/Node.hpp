@@ -38,7 +38,7 @@ namespace wz {
         virtual void FreeChilds();
 
         [[nodiscard]]
-        virtual Node* getParent() const;
+        virtual Node* get_parent() const;
 
         [[nodiscard]] [[maybe_unused]]
         auto children_count() const;
@@ -57,10 +57,10 @@ namespace wz {
 
         Reader* reader;
 
-        bool parsePropertyList(Node* target, size_t offset);
-        void parseExtendProp(const std::wstring& name, Node* target, const size_t& offset);
-        WzCanvas parseCanvasProperty();
-        WzSound parseSoundProperty();
+        bool parse_property_list(Node* target, size_t offset);
+        void parse_extended_prop(const std::wstring& name, Node* target, const size_t& offset);
+        WzCanvas parse_canvas_property();
+        WzSound parse_sound_property();
 
         friend class Directory;
 

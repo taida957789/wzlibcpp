@@ -601,7 +601,7 @@ bool WzParseImage(BinReader &reader, const wz::Directory *pimg, wz::Node *root) 
     return false;
 }
 
-u32 wz::GetVersionHash(i32 encryptedVersion, i32 realVersion) {
+u32 wz::get_version_hash(i32 encryptedVersion, i32 realVersion) {
     i32 versionHash = 0;
     auto versionString = std::to_string(realVersion);
 

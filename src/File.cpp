@@ -25,13 +25,13 @@ wz::File::File(const u8* new_iv, const wchar_t *path)
 }
 
 bool wz::File::parse() {
-    auto magic = reader.readString(4);
+    auto magic = reader.read_string(4);
     if (magic != L"PKG1") return false;
 
     auto fileSize = reader.read<u64>();
     auto startAt = reader.read<u32>();
 
-    auto copyright = reader.readString();
+    auto copyright = reader.read_string();
 
     reader.set_position(startAt);
 
@@ -41,7 +41,7 @@ bool wz::File::parse() {
 
     for (int i = 0; i < 0x7FFF; ++i) {
         fileVersion = static_cast<decltype(fileVersion)>(i);
-        u32 versionHash = wz::GetVersionHash(encryptedVersion, fileVersion);
+        u32 versionHash = wz::get_version_hash(encryptedVersion, fileVersion);
 
         if (versionHash != 0) {
             desc.start = startAt;
@@ -68,10 +68,10 @@ bool wz::File::parse() {
 }
 
 bool wz::File::parse_directories(wz::Node *node) {
-    auto entryCount = reader.readCompressedInt();
+    auto entryCount = reader.read_compressed_int();
 
     for (int i = 0; i < entryCount; ++i) {
-        auto type = reader.readByte();
+        auto type = reader.read_byte();
         size_t prevPos = 0;
         std::wstring name;
 
@@ -82,15 +82,15 @@ bool wz::File::parse_directories(wz::Node *node) {
             continue;
         } else if (type == 2) {
             i32 stringOffset = reader.read<i32>();
-            type = reader.readWzStringFromOffset<u8>(desc.start + stringOffset, name);
+            type = reader.read_wz_string_from_offset<u8>(desc.start + stringOffset, name);
         } else if (type == 3 || type == 4) {
-            name = reader.readWzString();
+            name = reader.read_wz_string();
         } else {
             assert(0);
         }
 
-        i32 size = reader.readCompressedInt();
-        i32 checksum = reader.readCompressedInt();
+        i32 size = reader.read_compressed_int();
+        i32 checksum = reader.read_compressed_int();
         u32 offset = get_wz_offset();
 
         if (node == nullptr && offset >= reader.size())
@@ -149,10 +149,6 @@ u32 wz::File::get_wz_offset() {
 
 wz::Node* wz::File::get_root() const {
     return root;
-}
-
-wz::Reader& wz::File::ref_reader() {
-    return reader;
 }
 
 void wz::File::init_key() {

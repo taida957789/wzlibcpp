@@ -64,7 +64,7 @@ void wz::Node::FreeChilds() {
     children.clear();
 }
 
-wz::Node* wz::Node::getParent() const {
+wz::Node* wz::Node::get_parent() const {
     return parent;
 }
 
@@ -82,11 +82,11 @@ auto wz::Node::children_count() const {
 
 #define STR(S) {S.begin(), S.end()}
 
-bool wz::Node::parsePropertyList(Node* target, size_t offset) {
-    auto entryCount = reader->readCompressedInt();
+bool wz::Node::parse_property_list(Node* target, size_t offset) {
+    auto entryCount = reader->read_compressed_int();
 
     for (i32 i = 0; i < entryCount; i++) {
-        auto name = reader->readStringBlock(offset);
+        auto name = reader->read_string_block(offset);
 
         auto prop_type = reader->read<u8>();
         switch (prop_type) {
@@ -102,7 +102,7 @@ bool wz::Node::parsePropertyList(Node* target, size_t offset) {
             }
                 break;
             case 3: {
-                auto* prop = new wz::Property<i32>(*reader, reader->readCompressedInt());
+                auto* prop = new wz::Property<i32>(*reader, reader->read_compressed_int());
                 target->appendChild(name, prop);
             }
                 break;
@@ -124,7 +124,7 @@ bool wz::Node::parsePropertyList(Node* target, size_t offset) {
                 break;
             case 8: {
                 auto* prop = new wz::Property<std::wstring>(*reader);
-                auto str = reader->readStringBlock(offset);
+                auto str = reader->read_string_block(offset);
                 prop->set(str);
                 target->appendChild(name, prop);
             }
@@ -132,7 +132,7 @@ bool wz::Node::parsePropertyList(Node* target, size_t offset) {
             case 9: {
                 auto ofs = reader->read<u32>();
                 auto eob = reader->get_position() + ofs;
-                parseExtendProp(name, target, offset);
+                parse_extended_prop(name, target, offset);
                 if (reader->get_position() != eob) reader->set_position(eob);
             }
                 break;
@@ -146,54 +146,54 @@ bool wz::Node::parsePropertyList(Node* target, size_t offset) {
     return true;
 }
 
-void wz::Node::parseExtendProp(const std::wstring &name, wz::Node *target, const size_t &offset) {
-    auto strPropName = reader->readStringBlock(offset);
+void wz::Node::parse_extended_prop(const std::wstring &name, wz::Node *target, const size_t &offset) {
+    auto strPropName = reader->read_string_block(offset);
 
     if (strPropName == L"Property") {
         auto* pProp = new Property<WzSubProp>(*reader);
         reader->skip(sizeof(u8));
-        parsePropertyList(pProp, offset);
+        parse_property_list(pProp, offset);
         target->appendChild(name, pProp);
     } else if (strPropName == L"Canvas") {
         auto* pProp = new Property<WzCanvas>(*reader);
         reader->skip(sizeof(u8));
         if (reader->read<u8>() == 1) {
             reader->skip(sizeof(u16));
-            parsePropertyList(pProp, offset);
+            parse_property_list(pProp, offset);
         }
 
-        pProp->set(parseCanvasProperty());
+        pProp->set(parse_canvas_property());
 
         target->appendChild(name, pProp);
     } else if (strPropName == L"Shape2D#Vector2D") {
         auto* pProp = new Property<WzVec2D>(*reader);
 
         pProp->set({
-            reader->readCompressedInt(),
-            reader->readCompressedInt()
+                           reader->read_compressed_int(),
+            reader->read_compressed_int()
         });
 
         target->appendChild(name, pProp);
     } else if (strPropName == L"Shape2D#Convex2D") {
         auto* pProp = new Property<WzConvex>(*reader);
 
-        int convexEntryCount = reader->readCompressedInt();
+        int convexEntryCount = reader->read_compressed_int();
         for (int i = 0; i < convexEntryCount; i++) {
-            parseExtendProp(name, pProp, offset);
+            parse_extended_prop(name, pProp, offset);
         }
 
         target->appendChild(name, pProp);
     } else if (strPropName == L"Sound_DX8") {
         auto* pProp = new Property<WzSound>(*reader);
 
-        pProp->set(parseSoundProperty());
+        pProp->set(parse_sound_property());
 
         target->appendChild(name, pProp);
     } else if (strPropName == L"UOL") {
         reader->skip(sizeof(u8));
         auto* pProp = new Property<WzUOL>(*reader);
         WzUOL uol;
-        auto s = reader->readStringBlock(offset);
+        auto s = reader->read_string_block(offset);
         uol.m_UOL = STR(s);
         pProp->set(uol);
         target->appendChild(name, pProp);
@@ -203,11 +203,11 @@ void wz::Node::parseExtendProp(const std::wstring &name, wz::Node *target, const
 
 }
 
-wz::WzCanvas wz::Node::parseCanvasProperty() {
+wz::WzCanvas wz::Node::parse_canvas_property() {
     WzCanvas canvas;
-    canvas.m_Width = reader->readCompressedInt();
-    canvas.m_Height = reader->readCompressedInt();
-    canvas.m_Format = reader->readCompressedInt();
+    canvas.m_Width = reader->read_compressed_int();
+    canvas.m_Height = reader->read_compressed_int();
+    canvas.m_Format = reader->read_compressed_int();
     canvas.m_Format2 = reader->read<u8>();
     reader->skip(sizeof(u32));
     canvas.m_Size = reader->read<i32>() - 1;
@@ -246,12 +246,12 @@ wz::WzCanvas wz::Node::parseCanvasProperty() {
     return canvas;
 }
 
-wz::WzSound wz::Node::parseSoundProperty() {
+wz::WzSound wz::Node::parse_sound_property() {
     WzSound sound;
     // reader->ReadUInt8();
     reader->skip(sizeof(u8));
-    sound.m_Size = reader->readCompressedInt();
-    sound.m_TimeMS = reader->readCompressedInt();
+    sound.m_Size = reader->read_compressed_int();
+    sound.m_TimeMS = reader->read_compressed_int();
     reader->set_position(reader->get_position() + 56);
     sound.m_Frequency = reader->read<i32>();
     reader->set_position(reader->get_position() + 22);

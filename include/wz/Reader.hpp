@@ -19,43 +19,43 @@ namespace wz {
         void skip(const size_t& size);
 
         [[nodiscard]]
-        u8 readByte();
+        u8 read_byte();
 
         /*
          * read string until **null terminated**
          */
         [[nodiscard]]
-        auto readString() -> std::wstring;
+        auto read_string() -> std::wstring;
 
         [[nodiscard]]
-        auto readString(const size_t& len) -> std::wstring;
+        auto read_string(const size_t& len) -> std::wstring;
 
         [[nodiscard]]
-        i32 readCompressedInt();
+        i32 read_compressed_int();
 
         [[nodiscard]]
-        std::wstring readWzString();
+        std::wstring read_wz_string();
 
-        std::wstring readStringBlock(const size_t& offset);
+        std::wstring read_string_block(const size_t& offset);
 
         template<typename T> [[nodiscard]]
-        T readWzStringFromOffset(const size_t& offset, std::wstring& out) {
+        T read_wz_string_from_offset(const size_t& offset, std::wstring& out) {
             auto prev = cursor;
             set_position(offset);
             auto result = read<T>();
-            out = readWzString();
+            out = read_wz_string();
             set_position(prev);
             return result;
         }
 
-        std::wstring readWzStringFromOffset(const size_t& offset);
+        std::wstring read_wz_string_from_offset(const size_t& offset);
 
         [[nodiscard]]
         size_t get_position() const;
 
         void set_position(const size_t& size);
 
-        mio::mmap_source::size_type size();
+        mio::mmap_source::size_type size() const;
 
         [[nodiscard]]
         bool is_wz_image();

@@ -28,7 +28,7 @@ namespace wz {
             const auto current_offset = get_offset();
             reader->set_position(current_offset);
             if (reader->is_wz_image()) {
-                return parsePropertyList(node, current_offset);
+                return parse_property_list(node, current_offset);
             }
         }
         return false;

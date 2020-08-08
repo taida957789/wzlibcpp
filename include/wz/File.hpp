@@ -18,8 +18,6 @@ namespace wz {
         [[nodiscard]]
         Node* get_root() const;
 
-        Reader& ref_reader();
-
         [[nodiscard]]
         u8* get_key() const;
 
