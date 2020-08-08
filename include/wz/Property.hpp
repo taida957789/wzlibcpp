@@ -6,14 +6,13 @@ namespace wz {
     template<typename T>
     class Property : public Node {
     public:
-        explicit Property() = default;
+        explicit Property(Reader& from_file) : Node(from_file) {}
 
-        explicit Property(T new_data)
-            : data(new_data) {
+        explicit Property(Reader& from_file, T new_data)
+            : data(new_data), Node(from_file) {
         };
 
-        [[deprecated]]
-        void Set(T new_data) {
+        void set(T new_data) {
             data = new_data;
         }
 

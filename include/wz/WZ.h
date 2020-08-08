@@ -3,58 +3,12 @@
 
 #include "BinReader.h"
 #include "Node.h"
+#include "Directory.hpp"
+#include "Types.hpp"
 
 //////////////////////////////////////////////////////////////////////////
-struct WzNull {
 
-};
 
-struct WzSubProp {
-
-};
-
-struct WzConvex {
-
-};
-
-struct WzUOL {
-    std::wstring m_UOL;
-};
-
-struct WzCanvas {
-    int m_Width;
-    int m_Height;
-    int m_Format;
-    int m_Format2;
-    bool m_Encrypted;
-    int m_Size;
-    int m_UncompSize;
-    uint64 m_Offset;
-
-    WzCanvas()
-            : m_Width(0), m_Height(0),
-              m_Format(0), m_Format2(0),
-              m_Encrypted(false), m_Size(0), m_UncompSize(0),
-              m_Offset(0) {}
-};
-
-struct WzSound {
-    int m_TimeMS;
-    int m_Frequency;
-    int m_Size;
-    uint64 m_Offset;
-
-    WzSound() : m_TimeMS(0), m_Frequency(0), m_Size(0), m_Offset(0) {}
-};
-
-struct WzVec2D {
-    int m_X;
-    int m_Y;
-
-    WzVec2D() : m_X(0), m_Y(0) {}
-};
-
-//////////////////////////////////////////////////////////////////////////
 struct WzFileDesc {
     unsigned int m_Start;
     unsigned int m_Hash;
@@ -86,9 +40,20 @@ bool WzParseFile(BinReader& reader, WzFileDesc& fdesc, wz::Node* root);
 bool WzParseImage(BinReader& reader, const wz::Directory* pimg, wz::Node* root);
 
 [[deprecated]]
-void* WzRebuildCanvas(FileMapping& fm, const WzCanvas& canvas, size_t& szBuf, size_t& bpp);
+void* WzRebuildCanvas(FileMapping& fm, const wz::WzCanvas& canvas, size_t& szBuf, size_t& bpp);
 
 namespace wz {
+
+    struct Description {
+        u32 start;
+        u32 hash;
+        i16 version;
+    };
+
+    u32 GetVersionHash(i32 encryptedVersion, i32 realVersion);
+
+    [[deprecated]]
+    void initAES(const u8* iv);
 
 }
 

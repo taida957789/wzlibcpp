@@ -11,7 +11,7 @@
 	typedef unsigned long long uint64;
 #endif
 
-class [[deprecated]] FileMapping
+class FileMapping
 {
 public:
 	enum ReadHint

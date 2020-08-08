@@ -4,6 +4,9 @@
 #include <vector>
 #include <string>
 
+#include "Reader.hpp"
+#include "Types.hpp"
+
 namespace wz {
 
     class Node;
@@ -13,12 +16,14 @@ namespace wz {
 
     class Node {
     public:
-        Node();
+
+        explicit Node();
+        explicit Node(Reader& from_file);
 
         virtual void appendChild(const std::wstring& name, Node* node);
 
-        [[deprecated]]
-        virtual const WzMap& GetChilds() const;
+        [[nodiscard]]
+        virtual const WzMap& get_children() const;
 
         [[deprecated]]
         virtual void Delete();
@@ -44,15 +49,21 @@ namespace wz {
         [[maybe_unused]]
         WzMap::iterator end();
 
-    public:
-        static Node* New();
-
     protected:
         virtual ~Node();
 
-    protected:
         Node* parent;
         WzMap children;
+
+        Reader* reader;
+
+        bool parsePropertyList(Node* target, size_t offset);
+        void parseExtendProp(const std::wstring& name, Node* target, const size_t& offset);
+        WzCanvas parseCanvasProperty();
+        WzSound parseSoundProperty();
+
+        friend class Directory;
+
     };
 
 }

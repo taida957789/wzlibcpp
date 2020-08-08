@@ -6,21 +6,18 @@
 namespace wz {
     class Directory : public Node {
     public:
-        explicit Directory(bool img, int new_size, int new_checksum, unsigned int new_offset);
+        explicit Directory(Reader& from_file, bool img, int new_size, int new_checksum, unsigned int new_offset);
 
         [[deprecated]]
         void Set(bool img, int new_size, int new_checksum, unsigned int new_offset);
 
         [[nodiscard]]
-        u32 GetOffset() const;
+        u32 get_offset() const;
 
         [[nodiscard]]
-        bool IsImage() const;
+        bool is_image() const;
 
-    public:
-
-        [[deprecated]]
-        static Directory *New();
+        bool parse(Node* node);
 
     private:
         bool image;
