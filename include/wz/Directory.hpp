@@ -17,7 +17,7 @@ namespace wz {
         [[nodiscard]]
         bool is_image() const;
 
-        bool parse(Node* node);
+        bool parse_image(Node* node);
 
     private:
         bool image;

@@ -117,19 +117,20 @@ mio::mmap_source::size_type wz::Reader::size() {
 }
 
 bool wz::Reader::is_wz_image() {
-    return !(read<u8>() != 0x73
-             || readWzString() != L"Property"
-             || read<u16>() != 0);
+    if (read<u8>() != 0x73) return false;
+    if (readWzString() != L"Property") return false;
+    if (read<u16>() != 0) return false;
+    return true;
 }
 
 std::wstring wz::Reader::readStringBlock(const size_t& offset) {
     switch (read<u8>()) {
         case 0: [[fallthrough]];
         case 0x73:
-            return readString();
+            return readWzString();
         case 1: [[fallthrough]];
         case 0x1B:
-            return readWzStringFromOffset(offset);
+            return readWzStringFromOffset(offset + read<u32>());
         default: {
             assert(0);
         }

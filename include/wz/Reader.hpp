@@ -21,6 +21,9 @@ namespace wz {
         [[nodiscard]]
         u8 readByte();
 
+        /*
+         * read string until **null terminated**
+         */
         [[nodiscard]]
         auto readString() -> std::wstring;
 
@@ -61,7 +64,7 @@ namespace wz {
 
     private:
 
-        u8* key;
+        u8* key = nullptr;
 
         size_t cursor = 0;
 

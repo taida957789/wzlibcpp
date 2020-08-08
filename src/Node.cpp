@@ -85,48 +85,48 @@ auto wz::Node::children_count() const {
 bool wz::Node::parsePropertyList(Node* target, size_t offset) {
     auto entryCount = reader->readCompressedInt();
 
-    for (int i = 0; i < entryCount; i++) {
+    for (i32 i = 0; i < entryCount; i++) {
         auto name = reader->readStringBlock(offset);
 
         auto prop_type = reader->read<u8>();
         switch (prop_type) {
             case 0: {
                 auto* prop = new wz::Property<WzNull>(*reader);
-                target->appendChild(STR(name), prop);
+                target->appendChild(name, prop);
             }
                 break;
-            case 0x0B:
+            case 0x0B: [[fallthrough]];
             case 2: {
                 auto* prop = new wz::Property<u16>(*reader, reader->read<u16>());
-                target->appendChild(STR(name), prop);
+                target->appendChild(name, prop);
             }
                 break;
             case 3: {
                 auto* prop = new wz::Property<i32>(*reader, reader->readCompressedInt());
-                target->appendChild(STR(name), prop);
+                target->appendChild(name, prop);
             }
                 break;
             case 4: {
                 auto type = reader->read<u8>();
                 if (type == 0x80) {
                     auto* prop = new wz::Property<f32>(*reader, reader->read<f32>());
-                    target->appendChild(STR(name), prop);
+                    target->appendChild(name, prop);
                 } else if (type == 0) {
                     auto *pProp = new wz::Property<f32>(*reader, 0.f);
-                    target->appendChild(STR(name), pProp);
+                    target->appendChild(name, pProp);
                 }
             }
                 break;
             case 5: {
                 auto* prop = new wz::Property<f64>(*reader, reader->read<f64>());
-                target->appendChild(STR(name), prop);
+                target->appendChild(name, prop);
             }
                 break;
             case 8: {
                 auto* prop = new wz::Property<std::wstring>(*reader);
                 auto str = reader->readStringBlock(offset);
-                prop->set(STR(str));
-                target->appendChild(STR(name), prop);
+                prop->set(str);
+                target->appendChild(name, prop);
             }
                 break;
             case 9: {

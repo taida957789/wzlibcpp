@@ -21,7 +21,7 @@ namespace wz {
         return image;
     }
 
-    bool Directory::parse(Node* node) {
+    bool Directory::parse_image(Node* node) {
         if (is_image()) {
             node->reader = reader;
 
