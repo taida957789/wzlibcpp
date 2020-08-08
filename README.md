@@ -10,6 +10,11 @@ more easier, cleaner api and support cross-platform
 
 ☑️ cross-platform
 
+# Dependencies
+
+* zlib
+* mio - for mmap (aka file mapping in windows)
+
 # Usage
 
 ```cpp
