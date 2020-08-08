@@ -1,7 +1,6 @@
 #ifndef __WZ_h__
 #define __WZ_h__
 
-#include "BinReader.h"
 #include "Node.hpp"
 #include "Directory.hpp"
 #include "Types.hpp"
@@ -29,18 +28,6 @@ const unsigned char WzKMSKeyIV[4] =
 
 [[deprecated]]
 void WzGenKeys(const unsigned char* IV);
-
-[[deprecated]]
-void WzParseListFile(BinReader& reader, std::vector<std::wstring> &strList);
-
-[[deprecated]]
-bool WzParseFile(BinReader& reader, WzFileDesc& fdesc, wz::Node* root);
-
-[[deprecated]]
-bool WzParseImage(BinReader& reader, const wz::Directory* pimg, wz::Node* root);
-
-[[deprecated]]
-void* WzRebuildCanvas(FileMapping& fm, const wz::WzCanvas& canvas, size_t& szBuf, size_t& bpp);
 
 namespace wz {
 
