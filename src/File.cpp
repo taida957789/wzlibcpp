@@ -9,7 +9,12 @@ wz::File::File(const std::initializer_list<u8>& new_iv, const char *path)
     : reader(Reader(path)), root(new Node(reader)), key(new u8[0x10000]), iv(nullptr) {
     iv = new u8[4];
     memcpy(iv, new_iv.begin(), 4);
-    key = new u8[0x10000];
+    init_key();
+    reader.set_key(key);
+}
+
+wz::File::File(u8* new_iv, const char *path)
+    : reader(Reader(path)), root(new Node(reader)), key(new u8[0x10000]), iv(new_iv) {
     init_key();
     reader.set_key(key);
 }
@@ -19,7 +24,12 @@ wz::File::File(const std::initializer_list<u8>& new_iv, const wchar_t *path)
     : reader(Reader(path)), root(new Node(reader)), key(new u8[0x10000]), iv(nullptr) {
     iv = new u8[4];
     memcpy(iv, new_iv.begin(), 4);
-    key = new u8[0x10000];
+    init_key();
+    reader.set_key(key);
+}
+
+wz::File::File(u8* new_iv, const wchar_t *path)
+    : reader(Reader(path)), root(new Node(reader)), key(new u8[0x10000]), iv(new_iv) {
     init_key();
     reader.set_key(key);
 }

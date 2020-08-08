@@ -11,8 +11,12 @@ namespace wz {
 
         explicit File(const std::initializer_list<u8>& new_iv, const char* path);
 
+        explicit File(u8* new_iv, const char* path);
+
 #ifdef _WIN32
         explicit File(const std::initializer_list<u8>& new_iv, const wchar_t* path);
+        
+        explicit File(u8* new_iv,, const wchar_t* path);
 #endif
 
         [[maybe_unused]]
