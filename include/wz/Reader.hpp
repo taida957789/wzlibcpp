@@ -7,7 +7,10 @@ namespace wz {
     class Reader final {
     public:
         explicit Reader(const char* file_path);
+
+#ifdef _WIN32
         explicit Reader(const wchar_t* file_path);
+#endif
 
         template<typename T> [[nodiscard]]
         T read() {

@@ -5,6 +5,7 @@
 /ZLIB
 /cmake-build-debug
 /.idea
+/build
 
 *.sln
 *.vcproj

@@ -14,6 +14,7 @@ wz::File::File(const std::initializer_list<u8>& new_iv, const char *path)
     reader.set_key(key);
 }
 
+#ifdef _WIN32
 wz::File::File(const std::initializer_list<u8>& new_iv, const wchar_t *path)
     : reader(Reader(path)), root(new Node(reader)), key(new u8[0x10000]), iv(nullptr) {
     iv = new u8[4];
@@ -22,6 +23,7 @@ wz::File::File(const std::initializer_list<u8>& new_iv, const wchar_t *path)
     init_key();
     reader.set_key(key);
 }
+#endif
 
 bool wz::File::parse() {
     auto magic = reader.read_string(4);
