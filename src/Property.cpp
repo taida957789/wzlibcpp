@@ -1,1 +1,1 @@
-#include "wz/Property.hpp"
+#include "Property.hpp"

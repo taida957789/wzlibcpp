@@ -1,10 +1,9 @@
-#include <wz/Wz.hpp>
-#include <wz/Directory.hpp>
 #include <cassert>
-#include <AES.h>
 #include "File.hpp"
+#include "Wz.hpp"
 #include "Directory.hpp"
 #include "Keys.hpp"
+#include "AES.h"
 
 wz::File::File(const std::initializer_list<u8>& new_iv, const char *path)
     : reader(Reader(path)), root(new Node(reader)), key(new u8[0x10000]), iv(nullptr) {

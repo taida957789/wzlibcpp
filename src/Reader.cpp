@@ -1,5 +1,5 @@
 #include <cassert>
-#include "wz/Reader.hpp"
+#include "Reader.hpp"
 #include "Keys.hpp"
 
 wz::Reader::Reader(const char *file_path)

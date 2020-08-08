@@ -1,6 +1,6 @@
 #include <cassert>
-#include "wz/Node.hpp"
-#include "wz/Property.hpp"
+#include "Node.hpp"
+#include "Property.hpp"
 
 wz::Node::Node() : parent(nullptr), reader(nullptr)  {}
 

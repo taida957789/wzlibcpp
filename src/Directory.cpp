@@ -1,4 +1,4 @@
-#include "wz/Directory.hpp"
+#include "Directory.hpp"
 
 namespace wz {
 

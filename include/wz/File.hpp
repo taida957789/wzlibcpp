@@ -15,10 +15,10 @@ namespace wz {
         [[maybe_unused]]
         bool parse();
 
-        [[nodiscard]]
+        [[maybe_unused]] [[nodiscard]]
         Node* get_root() const;
 
-        [[nodiscard]]
+        [[maybe_unused]] [[nodiscard]]
         u8* get_key() const;
 
     private:
