@@ -9,6 +9,8 @@ find_package(ZLIB REQUIRED)
 
 include_directories(
         include
+        include/wz
+        mio/single_include
         ${ZLIB_INCLUDE_DIR})
 
 file(GLOB SOURCE_FILES src/*.cpp)

@@ -1,4 +1,4 @@
-#include "FileUt.h"
+#include "wz/FileUt.h"
 
 void *file_read_m(const wchar_t *path, unsigned int *len, unsigned int m) {
     if (path) {

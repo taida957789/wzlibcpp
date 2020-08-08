@@ -1,4 +1,4 @@
-#include "FileMapping.h"
+#include "wz/FileMapping.h"
 #include <cassert>
 
 FileMapping::FileMapping() : m_hFileMap(0), m_qwFileSize(0), m_dwGran(0), m_dwBlockBytes(0), m_pMapped(0), m_qwMappedOffset(0), m_qwMappedBlockSize(0)

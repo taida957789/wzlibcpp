@@ -1,4 +1,4 @@
-#include "BinReader.h"
+#include "wz/BinReader.h"
 
 BinReader::BinReader(FileMapping& fm)
         : m_FileMapping(fm), m_Pointer(0), m_bError(false) {

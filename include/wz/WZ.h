@@ -2,7 +2,7 @@
 #define __WZ_h__
 
 #include "BinReader.h"
-#include "WzNode.h"
+#include "Node.h"
 
 //////////////////////////////////////////////////////////////////////////
 struct WzNull {
@@ -73,14 +73,23 @@ const unsigned char WzKMSKeyIV[4] =
                 0xB9, 0x7D, 0x63, 0xE9
         };
 
+[[deprecated]]
 void WzGenKeys(const unsigned char* IV);
 
+[[deprecated]]
 void WzParseListFile(BinReader& reader, std::vector<std::wstring> &strList);
 
-bool WzParseFile(BinReader& reader, WzFileDesc& fdesc, WzNode* root);
+[[deprecated]]
+bool WzParseFile(BinReader& reader, WzFileDesc& fdesc, wz::Node* root);
 
-bool WzParseImage(BinReader& reader, const WzDirectory* pimg, WzNode* root);
+[[deprecated]]
+bool WzParseImage(BinReader& reader, const wz::Directory* pimg, wz::Node* root);
 
+[[deprecated]]
 void* WzRebuildCanvas(FileMapping& fm, const WzCanvas& canvas, size_t& szBuf, size_t& bpp);
+
+namespace wz {
+
+}
 
 #endif
