@@ -10,7 +10,7 @@ namespace wz {
     public:
 
         explicit File(const std::initializer_list<u8>& new_iv, const char* path);
-        explicit File(const u8* new_iv, const wchar_t* path);
+        explicit File(const std::initializer_list<u8>& new_iv, const wchar_t* path);
 
         [[maybe_unused]]
         bool parse();

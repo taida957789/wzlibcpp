@@ -15,10 +15,10 @@ wz::File::File(const std::initializer_list<u8>& new_iv, const char *path)
     reader.set_key(key);
 }
 
-wz::File::File(const u8* new_iv, const wchar_t *path)
+wz::File::File(const std::initializer_list<u8>& new_iv, const wchar_t *path)
     : reader(Reader(path)), root(new Node(reader)), key(new u8[0x10000]), iv(nullptr) {
     iv = new u8[4];
-    memcpy(iv, new_iv, 4);
+    memcpy(iv, new_iv.begin(), 4);
     key = new u8[0x10000];
     init_key();
     reader.set_key(key);
@@ -37,25 +37,25 @@ bool wz::File::parse() {
 
     auto encryptedVersion = reader.read<i16>();
 
-    i16 fileVersion = -1;
+    i16 file_version = -1;
 
     for (int i = 0; i < 0x7FFF; ++i) {
-        fileVersion = static_cast<decltype(fileVersion)>(i);
-        u32 versionHash = wz::get_version_hash(encryptedVersion, fileVersion);
+        file_version = static_cast<decltype(file_version)>(i);
+        u32 version_hash = wz::get_version_hash(encryptedVersion, file_version);
 
-        if (versionHash != 0) {
+        if (version_hash != 0) {
             desc.start = startAt;
-            desc.hash = versionHash;
-            desc.version = fileVersion;
+            desc.hash = version_hash;
+            desc.version = file_version;
 
-            auto prevPosition = reader.get_position();
+            auto prev_position = reader.get_position();
 
             if (!parse_directories(nullptr)) {
-                reader.set_position(prevPosition);
+                reader.set_position(prev_position);
                 continue;
             } else {
                 if (root) {
-                    reader.set_position(prevPosition);
+                    reader.set_position(prev_position);
                     parse_directories(root);
                 }
                 return true;
@@ -68,9 +68,9 @@ bool wz::File::parse() {
 }
 
 bool wz::File::parse_directories(wz::Node *node) {
-    auto entryCount = reader.read_compressed_int();
+    auto entry_count = reader.read_compressed_int();
 
-    for (int i = 0; i < entryCount; ++i) {
+    for (int i = 0; i < entry_count; ++i) {
         auto type = reader.read_byte();
         size_t prevPos = 0;
         std::wstring name;
