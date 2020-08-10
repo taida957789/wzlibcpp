@@ -8,15 +8,13 @@ namespace wz {
     public:
         explicit Directory(Reader& from_file, bool img, int new_size, int new_checksum, unsigned int new_offset);
 
-        [[deprecated]]
-        void Set(bool img, int new_size, int new_checksum, unsigned int new_offset);
-
         [[nodiscard]]
         u32 get_offset() const;
 
         [[nodiscard]]
         bool is_image() const;
 
+        [[maybe_unused]]
         bool parse_image(Node* node);
 
     private:

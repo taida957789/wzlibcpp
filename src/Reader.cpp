@@ -2,14 +2,14 @@
 #include "Reader.hpp"
 #include "Keys.hpp"
 
-wz::Reader::Reader(const char *file_path)
+wz::Reader::Reader(const char* file_path)
         : cursor(0) {
     std::error_code error_code;
     mmap = mio::make_mmap_source<decltype(file_path)>(file_path, error_code);
 }
 
 #ifdef _WIN32
-wz::Reader::Reader(const wchar_t *file_path)
+wz::Reader::Reader(const wchar_t* file_path)
         : cursor(0) {
     std::error_code error_code;
     mmap = mio::make_mmap_source<decltype(file_path)>(file_path, error_code);
@@ -32,8 +32,8 @@ auto wz::Reader::read_string() -> std::wstring {
     return result;
 }
 
-auto wz::Reader::read_string(const size_t &len) -> std::wstring {
-    std::wstring result {};
+auto wz::Reader::read_string(const size_t& len) -> std::wstring {
+    std::wstring result{};
 
     for (int i = 0; i < len; ++i) {
         result.push_back(read_byte());
@@ -140,7 +140,7 @@ std::wstring wz::Reader::read_string_block(const size_t& offset) {
     return {};
 }
 
-std::wstring wz::Reader::read_wz_string_from_offset(const size_t &offset) {
+std::wstring wz::Reader::read_wz_string_from_offset(const size_t& offset) {
     auto prev = get_position();
     set_position(offset);
     auto result = read_wz_string();
@@ -148,6 +148,6 @@ std::wstring wz::Reader::read_wz_string_from_offset(const size_t &offset) {
     return result;
 }
 
-void wz::Reader::set_key(u8 *new_key) {
+void wz::Reader::set_key(u8* new_key) {
     key = new_key;
 }

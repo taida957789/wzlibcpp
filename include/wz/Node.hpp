@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 
+#include "Wz.hpp"
 #include "Reader.hpp"
 #include "Types.hpp"
 
@@ -18,39 +19,31 @@ namespace wz {
     public:
 
         explicit Node();
-        explicit Node(Reader& from_file);
+        explicit Node(const Type& new_type, Reader& from_file);
+
+        virtual ~Node();
 
         virtual void appendChild(const std::wstring& name, Node* node);
 
-        [[nodiscard]]
+        [[maybe_unused]] [[nodiscard]]
         virtual const WzMap& get_children() const;
 
-        [[deprecated]]
-        virtual void Delete();
-
-        [[deprecated]]
-        virtual void Free();
-
-        [[deprecated]]
-        virtual bool FreeChild(const std::wstring& name);
-
-        [[deprecated]]
-        virtual void FreeChilds();
-
-        [[nodiscard]]
+        [[maybe_unused]] [[nodiscard]]
         virtual Node* get_parent() const;
 
         [[nodiscard]] [[maybe_unused]]
-        auto children_count() const;
+        size_t children_count() const;
 
-        [[maybe_unused]]
         WzMap::iterator begin();
 
-        [[maybe_unused]]
         WzMap::iterator end();
 
+        [[maybe_unused]] [[nodiscard]]
+        Type get_type() const;
+
     protected:
-        virtual ~Node();
+
+        Type type;
 
         Node* parent;
         WzMap children;

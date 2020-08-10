@@ -5,22 +5,22 @@
 #include "Keys.hpp"
 #include "AES.h"
 
-wz::File::File(const std::initializer_list<u8>& new_iv, const char *path)
-    : reader(Reader(path)), root(new Node(reader)), key(new u8[0x10000]), iv(nullptr) {
+wz::File::File(const std::initializer_list<u8>& new_iv, const char* path)
+    : reader(Reader(path)), root(new Node(Type::NotSet, reader)), key(new u8[0x10000]), iv(nullptr) {
     iv = new u8[4];
     memcpy(iv, new_iv.begin(), 4);
     init_key();
     reader.set_key(key);
 }
 
-wz::File::File(u8* new_iv, const char *path)
-    : reader(Reader(path)), root(new Node(reader)), key(new u8[0x10000]), iv(new_iv) {
+wz::File::File(u8* new_iv, const char* path)
+    : reader(Reader(path)), root(new Node(Type::NotSet, reader)), key(new u8[0x10000]), iv(new_iv) {
     init_key();
     reader.set_key(key);
 }
 
 #ifdef _WIN32
-wz::File::File(const std::initializer_list<u8>& new_iv, const wchar_t *path)
+wz::File::File(const std::initializer_list<u8>& new_iv, const wchar_t* path)
     : reader(Reader(path)), root(new Node(reader)), key(new u8[0x10000]), iv(nullptr) {
     iv = new u8[4];
     memcpy(iv, new_iv.begin(), 4);
@@ -28,7 +28,7 @@ wz::File::File(const std::initializer_list<u8>& new_iv, const wchar_t *path)
     reader.set_key(key);
 }
 
-wz::File::File(u8* new_iv, const wchar_t *path)
+wz::File::File(u8* new_iv, const wchar_t* path)
     : reader(Reader(path)), root(new Node(reader)), key(new u8[0x10000]), iv(new_iv) {
     init_key();
     reader.set_key(key);
@@ -48,10 +48,8 @@ bool wz::File::parse() {
 
     auto encryptedVersion = reader.read<i16>();
 
-    i16 file_version = -1;
-
     for (int i = 0; i < 0x7FFF; ++i) {
-        file_version = static_cast<decltype(file_version)>(i);
+        i16 file_version = static_cast<decltype(file_version)>(i);
         u32 version_hash = wz::get_version_hash(encryptedVersion, file_version);
 
         if (version_hash != 0) {
@@ -78,7 +76,7 @@ bool wz::File::parse() {
 
 }
 
-bool wz::File::parse_directories(wz::Node *node) {
+bool wz::File::parse_directories(wz::Node* node) {
     auto entry_count = reader.read_compressed_int();
 
     for (int i = 0; i < entry_count; ++i) {
@@ -179,6 +177,6 @@ void wz::File::init_key() {
     }
 }
 
-u8 *wz::File::get_key() const {
+u8* wz::File::get_key() const {
     return key;
 }

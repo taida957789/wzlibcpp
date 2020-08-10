@@ -2,11 +2,21 @@
 #include "Node.hpp"
 #include "Property.hpp"
 
-wz::Node::Node() : parent(nullptr), reader(nullptr)  {}
+wz::Node::Node()
+        : parent(nullptr), reader(nullptr), type(Type::NotSet) {
+}
 
-wz::Node::Node(Reader& from_file) : parent(nullptr), reader(&from_file) {}
+wz::Node::Node(const Type& new_type, Reader& from_file)
+        : parent(nullptr), reader(& from_file), type(new_type) {
+}
 
-wz::Node::~Node() {}
+wz::Node::~Node() {
+    for (auto&[_, nodes] : children) {
+        for (auto* node : nodes) {
+            delete node;
+        }
+    }
+}
 
 void wz::Node::appendChild(const std::wstring& name, Node* node) {
     assert(node);
@@ -18,52 +28,6 @@ const wz::WzMap& wz::Node::get_children() const {
     return children;
 }
 
-void wz::Node::Delete() {
-    delete this;
-}
-
-void wz::Node::Free() {
-    for (WzMap::iterator it = children.begin();
-         it != children.end();
-         it++) {
-        for (WzList::iterator cit = it->second.begin();
-             cit != it->second.end();
-             cit++) {
-            (*cit)->Free();
-        }
-    }
-
-    Delete();
-}
-
-bool wz::Node::FreeChild(const std::wstring& name) {
-    WzMap::iterator it = children.find(name);
-    if (it != children.end()) {
-        for (WzList::iterator cit = it->second.begin();
-             cit != it->second.end();
-             cit++) {
-            (*cit)->Free();
-        }
-
-        children.erase(it);
-        return true;
-    }
-    return false;
-}
-
-void wz::Node::FreeChilds() {
-    for (WzMap::iterator it = children.begin();
-         it != children.end();
-         it++) {
-        for (WzList::iterator cit = it->second.begin();
-             cit != it->second.end();
-             cit++) {
-            (*cit)->Free();
-        }
-    }
-    children.clear();
-}
-
 wz::Node* wz::Node::get_parent() const {
     return parent;
 }
@@ -72,15 +36,13 @@ wz::WzMap::iterator wz::Node::begin() {
     return children.begin();
 }
 
-wz::WzMap::iterator wz::Node::end()  {
+wz::WzMap::iterator wz::Node::end() {
     return children.end();
 }
 
-auto wz::Node::children_count() const {
+size_t wz::Node::children_count() const {
     return children.size();
 }
-
-#define STR(S) {S.begin(), S.end()}
 
 bool wz::Node::parse_property_list(Node* target, size_t offset) {
     auto entryCount = reader->read_compressed_int();
@@ -95,7 +57,8 @@ bool wz::Node::parse_property_list(Node* target, size_t offset) {
                 target->appendChild(name, prop);
             }
                 break;
-            case 0x0B: [[fallthrough]];
+            case 0x0B:
+                [[fallthrough]];
             case 2: {
                 auto* prop = new wz::Property<u16>(*reader, reader->read<u16>());
                 target->appendChild(name, prop);
@@ -107,12 +70,12 @@ bool wz::Node::parse_property_list(Node* target, size_t offset) {
             }
                 break;
             case 4: {
-                auto type = reader->read<u8>();
-                if (type == 0x80) {
+                auto float_type = reader->read<u8>();
+                if (float_type == 0x80) {
                     auto* prop = new wz::Property<f32>(*reader, reader->read<f32>());
                     target->appendChild(name, prop);
-                } else if (type == 0) {
-                    auto *pProp = new wz::Property<f32>(*reader, 0.f);
+                } else if (float_type == 0) {
+                    auto* pProp = new wz::Property<f32>(*reader, 0.f);
                     target->appendChild(name, pProp);
                 }
             }
@@ -138,7 +101,6 @@ bool wz::Node::parse_property_list(Node* target, size_t offset) {
                 break;
             default: {
                 assert(0);
-                return false;
             }
         }
     }
@@ -146,57 +108,53 @@ bool wz::Node::parse_property_list(Node* target, size_t offset) {
     return true;
 }
 
-void wz::Node::parse_extended_prop(const std::wstring &name, wz::Node *target, const size_t &offset) {
+void wz::Node::parse_extended_prop(const std::wstring& name, wz::Node* target, const size_t& offset) {
     auto strPropName = reader->read_string_block(offset);
 
     if (strPropName == L"Property") {
-        auto* pProp = new Property<WzSubProp>(*reader);
+        auto* prop = new Property<WzSubProp>(*reader);
         reader->skip(sizeof(u8));
-        parse_property_list(pProp, offset);
-        target->appendChild(name, pProp);
+        parse_property_list(prop, offset);
+        target->appendChild(name, prop);
     } else if (strPropName == L"Canvas") {
-        auto* pProp = new Property<WzCanvas>(*reader);
+        auto* prop = new Property<WzCanvas>(*reader);
         reader->skip(sizeof(u8));
         if (reader->read<u8>() == 1) {
             reader->skip(sizeof(u16));
-            parse_property_list(pProp, offset);
+            parse_property_list(prop, offset);
         }
 
-        pProp->set(parse_canvas_property());
+        prop->set(parse_canvas_property());
 
-        target->appendChild(name, pProp);
+        target->appendChild(name, prop);
     } else if (strPropName == L"Shape2D#Vector2D") {
-        auto* pProp = new Property<WzVec2D>(*reader);
+        auto* prop = new Property<WzVec2D>(*reader);
 
-        pProp->set({
-                           reader->read_compressed_int(),
-            reader->read_compressed_int()
-        });
+        auto x = reader->read_compressed_int();
+        auto y = reader->read_compressed_int();
+        prop->set({x, y});
 
-        target->appendChild(name, pProp);
+        target->appendChild(name, prop);
     } else if (strPropName == L"Shape2D#Convex2D") {
-        auto* pProp = new Property<WzConvex>(*reader);
+        auto* prop = new Property<WzConvex>(*reader);
 
         int convexEntryCount = reader->read_compressed_int();
         for (int i = 0; i < convexEntryCount; i++) {
-            parse_extended_prop(name, pProp, offset);
+            parse_extended_prop(name, prop, offset);
         }
 
-        target->appendChild(name, pProp);
+        target->appendChild(name, prop);
     } else if (strPropName == L"Sound_DX8") {
-        auto* pProp = new Property<WzSound>(*reader);
+        auto* prop = new Property<WzSound>(*reader);
 
-        pProp->set(parse_sound_property());
+        prop->set(parse_sound_property());
 
-        target->appendChild(name, pProp);
+        target->appendChild(name, prop);
     } else if (strPropName == L"UOL") {
         reader->skip(sizeof(u8));
-        auto* pProp = new Property<WzUOL>(*reader);
-        WzUOL uol;
-        auto s = reader->read_string_block(offset);
-        uol.m_UOL = STR(s);
-        pProp->set(uol);
-        target->appendChild(name, pProp);
+        auto* prop = new Property<WzUOL>(*reader);
+        prop->set({ reader->read_string_block(offset) });
+        target->appendChild(name, prop);
     } else {
         assert(0);
     }
@@ -261,4 +219,8 @@ wz::WzSound wz::Node::parse_sound_property() {
     reader->set_position(sound.m_Offset + sound.m_Size);
 
     return sound;
+}
+
+wz::Type wz::Node::get_type() const {
+    return type;
 }

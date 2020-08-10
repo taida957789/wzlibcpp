@@ -1,37 +1,26 @@
 #include "Directory.hpp"
 
-namespace wz {
+wz::Directory::Directory(Reader& from_file, bool img, int new_size, int new_checksum, unsigned int new_offset)
+        : image(img), size(new_size), checksum(new_checksum), offset(new_offset), Node(img ? Type::Image : Type::Directory,from_file) {
+}
 
-    Directory::Directory(Reader& from_file, bool img, int new_size, int new_checksum, unsigned int new_offset)
-            : image(img), size(new_size), checksum(new_checksum), offset(new_offset), Node(from_file) {
-    }
+u32 wz::Directory::get_offset() const {
+    return offset;
+}
 
-    void wz::Directory::Set(bool img, int new_size, int new_checksum, unsigned int new_offset) {
-        image = img;
-        size = new_size;
-        checksum = new_checksum;
-        offset = new_offset;
-    }
+bool wz::Directory::is_image() const {
+    return image;
+}
 
-    u32 wz::Directory::get_offset() const {
-        return offset;
-    }
+bool wz::Directory::parse_image(Node* node) {
+    if (is_image()) {
+        node->reader = reader;
 
-    bool wz::Directory::is_image() const {
-        return image;
-    }
-
-    bool Directory::parse_image(Node* node) {
-        if (is_image()) {
-            node->reader = reader;
-
-            const auto current_offset = get_offset();
-            reader->set_position(current_offset);
-            if (reader->is_wz_image()) {
-                return parse_property_list(node, current_offset);
-            }
+        const auto current_offset = get_offset();
+        reader->set_position(current_offset);
+        if (reader->is_wz_image()) {
+            return parse_property_list(node, current_offset);
         }
-        return false;
     }
-
+    return false;
 }

@@ -1,30 +1,33 @@
 #ifndef __WZ_h__
 #define __WZ_h__
 
-#include "Node.hpp"
-#include "Directory.hpp"
 #include "Types.hpp"
 
 //////////////////////////////////////////////////////////////////////////
 
+namespace wz {
+    enum class Type : u8 {
+        NotSet = 0x00,
+        Directory = 0x10,
+        Image = 0x20,
+        Property = 0x30,
+    };
 
-struct WzFileDesc {
-    unsigned int m_Start;
-    unsigned int m_Hash;
-    short m_FileVersion;
+    namespace keys {
+        [[maybe_unused]]
+        const unsigned char gms[4] = {
+            0x4D, 0x23, 0xC7, 0x2B
+        };
 
-    WzFileDesc() : m_Start(0), m_Hash(0), m_FileVersion(0) {}
-};
+        [[maybe_unused]]
+        const unsigned char kms[4] = {
+            0xB9, 0x7D, 0x63, 0xE9
+        };
+    }
+}
 
 //////////////////////////////////////////////////////////////////////////
-const unsigned char WzGMSKeyIV[4] =
-        {
-                0x4D, 0x23, 0xC7, 0x2B
-        };
-const unsigned char WzKMSKeyIV[4] =
-        {
-                0xB9, 0x7D, 0x63, 0xE9
-        };
+
 
 [[deprecated]]
 void WzGenKeys(const unsigned char* IV);
