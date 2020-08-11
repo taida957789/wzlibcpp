@@ -29,6 +29,11 @@ more easier, cleaner api and support cross-platform
 #include <wz/Directory.hpp>
 
 template<typename T>
+constexpr auto string(T iterable) {
+    return std::wstring{iterable.begin(), iterable.end()};
+}
+
+template<typename T>
 constexpr auto back(T iterable) {
     return std::string{iterable.begin(), iterable.end()};
 }
