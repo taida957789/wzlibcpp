@@ -113,7 +113,7 @@ void wz::Node::parse_extended_prop(const std::wstring& name, wz::Node* target, c
 
     if (strPropName == L"Property") {
         auto* prop = new Property<WzSubProp>(*reader);
-        reader->skip(sizeof(u8));
+        reader->skip(sizeof(u16));
         parse_property_list(prop, offset);
         target->appendChild(name, prop);
     } else if (strPropName == L"Canvas") {
