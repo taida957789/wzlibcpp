@@ -6,53 +6,51 @@
 namespace wz {
 
     struct WzNull {
-
     };
 
     struct WzSubProp {
-
     };
 
     struct WzConvex {
-
     };
 
     struct WzUOL {
-        std::wstring m_UOL;
+        [[maybe_unused]]
+        std::wstring uol;
     };
 
     struct WzCanvas {
-        i32 m_Width;
-        i32 m_Height;
-        i32 m_Format;
-        i32 m_Format2;
-        bool m_Encrypted;
-        i32 m_Size;
-        i32 m_UncompSize;
-        size_t m_Offset;
+        i32 width;
+        i32 height;
+        i32 format;
+        i32 format2;
+        bool is_encrypted;
+        i32 size;
+        i32 uncompressed_size;
+        size_t offset;
 
         WzCanvas()
-                : m_Width(0), m_Height(0),
-                  m_Format(0), m_Format2(0),
-                  m_Encrypted(false), m_Size(0), m_UncompSize(0),
-                  m_Offset(0) {}
+                : width(0), height(0),
+                  format(0), format2(0),
+                  is_encrypted(false), size(0), uncompressed_size(0),
+                  offset(0) {}
     };
 
     struct WzSound {
-        i32 m_TimeMS;
-        i32 m_Frequency;
-        i32 m_Size;
-        size_t m_Offset;
+        i32 length;
+        i32 frequency;
+        i32 size;
+        size_t offset;
 
-        WzSound() : m_TimeMS(0), m_Frequency(0), m_Size(0), m_Offset(0) {}
+        WzSound() : length(0), frequency(0), size(0), offset(0) {}
     };
 
     struct WzVec2D {
 
-        int m_X;
-        int m_Y;
+        i32 x;
+        i32 y;
 
-        WzVec2D() : m_X(0), m_Y(0) {}
-        WzVec2D(int x, int y) : m_X(x), m_Y(y) {}
+        WzVec2D() : x(0), y(0) {}
+        WzVec2D(int new_x, int new_y) : x(new_x), y(new_y) {}
     };
 }

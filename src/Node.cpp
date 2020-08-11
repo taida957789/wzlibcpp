@@ -163,43 +163,43 @@ void wz::Node::parse_extended_prop(const std::wstring& name, wz::Node* target, c
 
 wz::WzCanvas wz::Node::parse_canvas_property() {
     WzCanvas canvas;
-    canvas.m_Width = reader->read_compressed_int();
-    canvas.m_Height = reader->read_compressed_int();
-    canvas.m_Format = reader->read_compressed_int();
-    canvas.m_Format2 = reader->read<u8>();
+    canvas.width = reader->read_compressed_int();
+    canvas.height = reader->read_compressed_int();
+    canvas.format = reader->read_compressed_int();
+    canvas.format2 = reader->read<u8>();
     reader->skip(sizeof(u32));
-    canvas.m_Size = reader->read<i32>() - 1;
+    canvas.size = reader->read<i32>() - 1;
     reader->skip(sizeof(u8));
 
-    canvas.m_Offset = reader->get_position();
+    canvas.offset = reader->get_position();
 
     auto header = reader->read<u16>();
 
     if (header != 0x9C78 && header != 0xDA78) {
-        canvas.m_Encrypted = true;
+        canvas.is_encrypted = true;
     }
 
-    switch (canvas.m_Format + canvas.m_Format2) {
+    switch (canvas.format + canvas.format2) {
         case 1: {
-            canvas.m_UncompSize = canvas.m_Width * canvas.m_Height * 2;
+            canvas.uncompressed_size = canvas.width * canvas.height * 2;
         }
             break;
         case 2: {
-            canvas.m_UncompSize = canvas.m_Width * canvas.m_Height * 4;
+            canvas.uncompressed_size = canvas.width * canvas.height * 4;
         }
             break;
         case 513:    // Format16bppRgb565
         {
-            canvas.m_UncompSize = canvas.m_Width * canvas.m_Height * 2;
+            canvas.uncompressed_size = canvas.width * canvas.height * 2;
         }
             break;
         case 517: {
-            canvas.m_UncompSize = canvas.m_Width * canvas.m_Height / 128;
+            canvas.uncompressed_size = canvas.width * canvas.height / 128;
         }
             break;
     }
 
-    reader->set_position(canvas.m_Offset + canvas.m_Size);
+    reader->set_position(canvas.offset + canvas.size);
 
     return canvas;
 }
@@ -208,15 +208,15 @@ wz::WzSound wz::Node::parse_sound_property() {
     WzSound sound;
     // reader->ReadUInt8();
     reader->skip(sizeof(u8));
-    sound.m_Size = reader->read_compressed_int();
-    sound.m_TimeMS = reader->read_compressed_int();
+    sound.size = reader->read_compressed_int();
+    sound.length = reader->read_compressed_int();
     reader->set_position(reader->get_position() + 56);
-    sound.m_Frequency = reader->read<i32>();
+    sound.frequency = reader->read<i32>();
     reader->set_position(reader->get_position() + 22);
 
-    sound.m_Offset = reader->get_position();
+    sound.offset = reader->get_position();
 
-    reader->set_position(sound.m_Offset + sound.m_Size);
+    reader->set_position(sound.offset + sound.size);
 
     return sound;
 }
