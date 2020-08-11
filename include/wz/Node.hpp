@@ -34,12 +34,17 @@ namespace wz {
         [[nodiscard]] [[maybe_unused]]
         size_t children_count() const;
 
+        [[maybe_unused]]
         WzMap::iterator begin();
 
+        [[maybe_unused]]
         WzMap::iterator end();
 
         [[maybe_unused]] [[nodiscard]]
         Type get_type() const;
+
+        [[nodiscard]]
+        bool is_property() const;
 
     protected:
 

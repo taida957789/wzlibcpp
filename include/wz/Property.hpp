@@ -6,10 +6,13 @@ namespace wz {
     template<typename T>
     class Property : public Node {
     public:
-        explicit Property(Reader& from_file) : Node(Type::Property, from_file) {}
+        explicit Property(const Type& new_type, Reader& from_file) : Node(new_type, from_file) {
+            assert(is_property());
+        }
 
-        explicit Property(Reader& from_file, T new_data)
-            : data(new_data), Node(Type::Property, from_file) {
+        explicit Property(const Type& new_type, Reader& from_file, T new_data)
+            : data(new_data), Node(new_type, from_file) {
+            assert(is_property());
         };
 
         void set(T new_data) {
