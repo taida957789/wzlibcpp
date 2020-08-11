@@ -35,6 +35,12 @@ wz::File::File(u8* new_iv, const wchar_t* path)
 }
 #endif
 
+wz::File::~File() {
+    delete[] iv;
+    delete[] key;
+    delete root;
+}
+
 bool wz::File::parse() {
     auto magic = reader.read_string(4);
     if (magic != L"PKG1") return false;

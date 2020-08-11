@@ -19,6 +19,8 @@ namespace wz {
         explicit File(u8* new_iv,, const wchar_t* path);
 #endif
 
+        ~File();
+
         [[maybe_unused]]
         bool parse();
 

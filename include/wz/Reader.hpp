@@ -58,6 +58,7 @@ namespace wz {
 
         void set_position(const size_t& size);
 
+        [[nodiscard]]
         mio::mmap_source::size_type size() const;
 
         [[nodiscard]]
