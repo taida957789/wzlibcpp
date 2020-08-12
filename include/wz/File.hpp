@@ -3,6 +3,7 @@
 #include "Node.hpp"
 #include "Reader.hpp"
 #include "Wz.hpp"
+#include "Keys.hpp"
 
 namespace wz {
     class File final {
@@ -27,12 +28,11 @@ namespace wz {
         [[maybe_unused]] [[nodiscard]]
         Node* get_root() const;
 
-        [[maybe_unused]] [[nodiscard]]
-        u8* get_key() const;
+        MutableKey key;
 
     private:
 
-        u8* key;
+        // u8* key;
         u8* iv;
 
         Node* root;
@@ -46,6 +46,8 @@ namespace wz {
         u32 get_wz_offset();
 
         void init_key();
+
+        friend class Node;
 
     };
 }

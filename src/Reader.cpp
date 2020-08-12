@@ -1,9 +1,10 @@
 #include <cassert>
+#include <vector>
 #include "Reader.hpp"
 #include "Keys.hpp"
 
-wz::Reader::Reader(const char* file_path)
-        : cursor(0) {
+wz::Reader::Reader(wz::MutableKey& new_key, const char* file_path)
+        : cursor(0), key(new_key) {
     std::error_code error_code;
     mmap = mio::make_mmap_source<decltype(file_path)>(file_path, error_code);
 }
@@ -18,6 +19,18 @@ wz::Reader::Reader(const wchar_t* file_path)
 
 u8 wz::Reader::read_byte() {
     return mmap[cursor++];
+}
+
+[[maybe_unused]]
+std::vector<u8> wz::Reader::read_bytes(const size_t& len) {
+    std::vector<u8> result(len);
+
+    for (size_t i = 0; i < len; ++i) {
+        result.emplace_back(read_byte());
+        cursor++;
+    }
+
+    return result;
 }
 
 auto wz::Reader::read_string() -> std::wstring {
@@ -81,7 +94,7 @@ std::wstring wz::Reader::read_wz_string() {
         for (int i = 0; i < len; ++i) {
             wchar_t encryptedChar = read<u16>();
             encryptedChar ^= mask;
-            encryptedChar ^= *reinterpret_cast<wchar_t*>(key + 2 * i);
+            encryptedChar ^= *reinterpret_cast<wchar_t*>(key[2 * i]);
             result.push_back(encryptedChar);
             mask++;
         }
@@ -148,6 +161,6 @@ std::wstring wz::Reader::read_wz_string_from_offset(const size_t& offset) {
     return result;
 }
 
-void wz::Reader::set_key(u8* new_key) {
+void wz::Reader::set_key(wz::MutableKey& new_key) {
     key = new_key;
 }

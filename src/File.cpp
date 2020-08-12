@@ -2,11 +2,9 @@
 #include "File.hpp"
 #include "Wz.hpp"
 #include "Directory.hpp"
-#include "Keys.hpp"
-#include "AES.h"
 
 wz::File::File(const std::initializer_list<u8>& new_iv, const char* path)
-    : reader(Reader(path)), root(new Node(Type::NotSet, reader)), key(new u8[0x10000]), iv(nullptr) {
+    : reader(Reader(key, path)), root(new Node(Type::NotSet, this)), key(), iv(nullptr) {
     iv = new u8[4];
     memcpy(iv, new_iv.begin(), 4);
     init_key();
@@ -14,7 +12,7 @@ wz::File::File(const std::initializer_list<u8>& new_iv, const char* path)
 }
 
 wz::File::File(u8* new_iv, const char* path)
-    : reader(Reader(path)), root(new Node(Type::NotSet, reader)), key(new u8[0x10000]), iv(new_iv) {
+    : reader(Reader(key, path)), root(new Node(Type::NotSet, this)), key(), iv(new_iv) {
     init_key();
     reader.set_key(key);
 }
@@ -37,7 +35,6 @@ wz::File::File(u8* new_iv, const wchar_t* path)
 
 wz::File::~File() {
     delete[] iv;
-    delete[] key;
     delete root;
 }
 
@@ -113,12 +110,12 @@ bool wz::File::parse_directories(wz::Node* node) {
 
         if (type == 3) {
             if (node != nullptr) {
-                auto* dir = new Directory(reader, false, size, checksum, offset);
+                auto* dir = new Directory(this, false, size, checksum, offset);
                 node->appendChild({name.begin(), name.end()}, dir);
             }
         } else {
             if (node != nullptr) {
-                auto* dir = new Directory(reader, true, size, checksum, offset);
+                auto* dir = new Directory(this, true, size, checksum, offset);
                 node->appendChild({name.begin(), name.end()}, dir);
             } else {
                 prevPos = reader.get_position();
@@ -167,22 +164,7 @@ wz::Node* wz::File::get_root() const {
 }
 
 void wz::File::init_key() {
-    AES AESGen;
-    u8 biv[16];
-
-    for (int i = 0; i < 16; i += 4) {
-        memmove(biv + i, iv, 4);
-    }
-
-    AESGen.SetParameters(256, 128);
-    AESGen.StartEncryption(wz::AesKey2);
-    AESGen.EncryptBlock(biv, key);
-
-    for (int i = 16; i < 0x10000; i += 16) {
-        AESGen.EncryptBlock(key + i - 16, key + i);
-    }
-}
-
-u8* wz::File::get_key() const {
-    return key;
+    std::vector<u8> aes_key_v(32);
+    memcpy(aes_key_v.data(), wz::AesKey2, 32);
+    key = MutableKey({iv[0], iv[1], iv[2], iv[3]}, aes_key_v);
 }

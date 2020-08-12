@@ -1,7 +1,10 @@
-# WzLib
-more easier, cleaner api and support cross-platform
+# wzlibcpp
+
+modern first, more easier, cleaner api and support cross-platform
 
 # Status
+
+⬜️ utf8 formatted string with `std::string`
 
 ⬜️ remove all of older (deprecated) api -
 `[[deprecated]]` attribute is currently marked.

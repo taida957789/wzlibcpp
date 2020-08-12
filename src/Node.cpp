@@ -1,13 +1,15 @@
 #include <cassert>
 #include "Node.hpp"
 #include "Property.hpp"
+#include "File.hpp"
 
 wz::Node::Node()
-        : parent(nullptr), reader(nullptr), type(Type::NotSet) {
+        : parent(nullptr), file(nullptr), type(Type::NotSet) {
 }
 
-wz::Node::Node(const Type& new_type, Reader& from_file)
-        : parent(nullptr), reader(& from_file), type(new_type) {
+wz::Node::Node(const Type& new_type, File* root_file)
+        : parent(nullptr), file(root_file), type(new_type) {
+    reader = &file->reader;
 }
 
 wz::Node::~Node() {
@@ -53,40 +55,40 @@ bool wz::Node::parse_property_list(Node* target, size_t offset) {
         auto prop_type = reader->read<u8>();
         switch (prop_type) {
             case 0: {
-                auto* prop = new wz::Property<WzNull>(Type::Null, *reader);
+                auto* prop = new wz::Property<WzNull>(Type::Null, file);
                 target->appendChild(name, prop);
             }
                 break;
             case 0x0B:
                 [[fallthrough]];
             case 2: {
-                auto* prop = new wz::Property<u16>(Type::UnsignedShort, *reader, reader->read<u16>());
+                auto* prop = new wz::Property<u16>(Type::UnsignedShort, file, reader->read<u16>());
                 target->appendChild(name, prop);
             }
                 break;
             case 3: {
-                auto* prop = new wz::Property<i32>(Type::Int, *reader, reader->read_compressed_int());
+                auto* prop = new wz::Property<i32>(Type::Int, file, reader->read_compressed_int());
                 target->appendChild(name, prop);
             }
                 break;
             case 4: {
                 auto float_type = reader->read<u8>();
                 if (float_type == 0x80) {
-                    auto* prop = new wz::Property<f32>(Type::Float, *reader, reader->read<f32>());
+                    auto* prop = new wz::Property<f32>(Type::Float, file, reader->read<f32>());
                     target->appendChild(name, prop);
                 } else if (float_type == 0) {
-                    auto* pProp = new wz::Property<f32>(Type::Float, *reader, 0.f);
+                    auto* pProp = new wz::Property<f32>(Type::Float, file, 0.f);
                     target->appendChild(name, pProp);
                 }
             }
                 break;
             case 5: {
-                auto* prop = new wz::Property<f64>(Type::Double, *reader, reader->read<f64>());
+                auto* prop = new wz::Property<f64>(Type::Double, file, reader->read<f64>());
                 target->appendChild(name, prop);
             }
                 break;
             case 8: {
-                auto* prop = new wz::Property<std::wstring>(Type::String, *reader);
+                auto* prop = new wz::Property<std::wstring>(Type::String, file);
                 auto str = reader->read_string_block(offset);
                 prop->set(str);
                 target->appendChild(name, prop);
@@ -112,12 +114,12 @@ void wz::Node::parse_extended_prop(const std::wstring& name, wz::Node* target, c
     auto strPropName = reader->read_string_block(offset);
 
     if (strPropName == L"Property") {
-        auto* prop = new Property<WzSubProp>(Type::SubProperty, *reader);
+        auto* prop = new Property<WzSubProp>(Type::SubProperty, file);
         reader->skip(sizeof(u16));
         parse_property_list(prop, offset);
         target->appendChild(name, prop);
     } else if (strPropName == L"Canvas") {
-        auto* prop = new Property<WzCanvas>(Type::Canvas, *reader);
+        auto* prop = new Property<WzCanvas>(Type::Canvas, file);
         reader->skip(sizeof(u8));
         if (reader->read<u8>() == 1) {
             reader->skip(sizeof(u16));
@@ -128,7 +130,7 @@ void wz::Node::parse_extended_prop(const std::wstring& name, wz::Node* target, c
 
         target->appendChild(name, prop);
     } else if (strPropName == L"Shape2D#Vector2D") {
-        auto* prop = new Property<WzVec2D>(Type::Vector2D, *reader);
+        auto* prop = new Property<WzVec2D>(Type::Vector2D, file);
 
         auto x = reader->read_compressed_int();
         auto y = reader->read_compressed_int();
@@ -136,7 +138,7 @@ void wz::Node::parse_extended_prop(const std::wstring& name, wz::Node* target, c
 
         target->appendChild(name, prop);
     } else if (strPropName == L"Shape2D#Convex2D") {
-        auto* prop = new Property<WzConvex>(Type::Convex2D, *reader);
+        auto* prop = new Property<WzConvex>(Type::Convex2D, file);
 
         int convexEntryCount = reader->read_compressed_int();
         for (int i = 0; i < convexEntryCount; i++) {
@@ -145,14 +147,14 @@ void wz::Node::parse_extended_prop(const std::wstring& name, wz::Node* target, c
 
         target->appendChild(name, prop);
     } else if (strPropName == L"Sound_DX8") {
-        auto* prop = new Property<WzSound>(Type::Sound, *reader);
+        auto* prop = new Property<WzSound>(Type::Sound, file);
 
         prop->set(parse_sound_property());
 
         target->appendChild(name, prop);
     } else if (strPropName == L"UOL") {
         reader->skip(sizeof(u8));
-        auto* prop = new Property<WzUOL>(Type::UOL, *reader);
+        auto* prop = new Property<WzUOL>(Type::UOL, file);
         prop->set({ reader->read_string_block(offset) });
         target->appendChild(name, prop);
     } else {
@@ -227,4 +229,12 @@ wz::Type wz::Node::get_type() const {
 
 bool wz::Node::is_property() const {
     return (bit(type) & bit(Type::Property)) == bit(Type::Property);
+}
+
+wz::MutableKey& wz::Node::get_key() const {
+    return file->key;
+}
+
+u8* wz::Node::get_iv() const {
+    return file->iv;
 }

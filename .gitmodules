@@ -1,3 +1,6 @@
 [submodule "mio"]
 	path = mio
 	url = https://github.com/mandreyel/mio
+[submodule "AES"]
+	path = AES
+	url = https://github.com/SeaniaTwix/AES

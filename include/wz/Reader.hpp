@@ -2,11 +2,12 @@
 
 #include <mio/mmap.hpp>
 #include "NumTypes.hpp"
+#include "Keys.hpp"
 
 namespace wz {
     class Reader final {
     public:
-        explicit Reader(const char* file_path);
+        explicit Reader(wz::MutableKey& new_key, const char* file_path);
 
 #ifdef _WIN32
         explicit Reader(const wchar_t* file_path);
@@ -23,6 +24,9 @@ namespace wz {
 
         [[nodiscard]]
         u8 read_byte();
+
+        [[maybe_unused]] [[nodiscard]]
+        std::vector<u8> read_bytes(const size_t& len);
 
         /*
          * read string until **null terminated**
@@ -64,17 +68,17 @@ namespace wz {
         [[nodiscard]]
         bool is_wz_image();
 
-        void set_key(u8* new_key);
+        void set_key(MutableKey& new_key);
 
     private:
 
-        u8* key = nullptr;
+        MutableKey& key;
 
         size_t cursor = 0;
 
         mio::mmap_source mmap;
 
-        explicit Reader() = default;
+        explicit Reader() = delete;
 
         friend class Node;
 

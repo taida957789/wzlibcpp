@@ -6,7 +6,7 @@
 namespace wz {
     class Directory : public Node {
     public:
-        explicit Directory(Reader& from_file, bool img, int new_size, int new_checksum, unsigned int new_offset);
+        explicit Directory(File* root_file, bool img, int new_size, int new_checksum, unsigned int new_offset);
 
         [[nodiscard]]
         u32 get_offset() const;
