@@ -88,7 +88,13 @@ namespace wz {
 
     static const u32 HeaderMagic = 0x31474B50;
 
-    static std::vector<u8> get_trimmed_user_key();
+    static std::vector<u8> get_trimmed_user_key()  {
+        std::vector<u8> num(32);
+        for (int i = 0; i < 128; i += 16) {
+            num[i / 4] = wz::user_key[i];
+        }
+        return num;
+    }
 
     class MutableKey final {
     public:

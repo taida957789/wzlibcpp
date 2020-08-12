@@ -61,10 +61,3 @@ void wz::MutableKey::ensure_key_size(size_t size) {
 
 }
 
-std::vector<u8> wz::get_trimmed_user_key() {
-    std::vector<u8> num(32);
-    for (int i = 0; i < 128; i += 16) {
-        num[i / 4] = wz::user_key[i];
-    }
-    return num;
-}
