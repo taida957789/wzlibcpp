@@ -18,7 +18,7 @@ include_directories(
         ${ZLIB_INCLUDE_DIR})
 
 file(GLOB SOURCE_FILES src/*.cpp)
-file(GLOB AES_SOURCE_FILES AES/*.cpp)
+file(GLOB AES_SOURCE_FILES AES/AES.cpp)
 
 add_library(wzlibcpp ${SOURCE_FILES} ${AES_SOURCE_FILES})
 target_link_libraries(ZLIB::ZLIB)
