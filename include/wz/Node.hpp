@@ -14,7 +14,7 @@ namespace wz {
     class File;
 
     typedef std::vector<Node*> WzList;
-    typedef std::map<std::wstring, WzList> WzMap;
+    typedef std::map<wzstring, WzList> WzMap;
 
     class Node {
     public:
@@ -24,7 +24,7 @@ namespace wz {
 
         virtual ~Node();
 
-        virtual void appendChild(const std::wstring& name, Node* node);
+        virtual void appendChild(const wzstring& name, Node* node);
 
         [[maybe_unused]] [[nodiscard]]
         virtual const WzMap& get_children() const;
@@ -58,7 +58,7 @@ namespace wz {
         Reader* reader = nullptr;
 
         bool parse_property_list(Node* target, size_t offset);
-        void parse_extended_prop(const std::wstring& name, Node* target, const size_t& offset);
+        void parse_extended_prop(const wzstring& name, Node* target, const size_t& offset);
         WzCanvas parse_canvas_property();
         WzSound parse_sound_property();
 

@@ -5,12 +5,15 @@
 #include "Keys.hpp"
 
 namespace wz {
+
+    using wzstring = std::u16string;
+
     class Reader final {
     public:
         explicit Reader(wz::MutableKey& new_key, const char* file_path);
 
 #ifdef _WIN32
-        explicit Reader(const wchar_t* file_path);
+        explicit Reader(const char16_t* file_path);
 #endif
 
         template<typename T> [[nodiscard]]
@@ -32,21 +35,21 @@ namespace wz {
          * read string until **null terminated**
          */
         [[nodiscard]]
-        auto read_string() -> std::wstring;
+        wzstring read_string();
 
         [[nodiscard]]
-        auto read_string(const size_t& len) -> std::wstring;
+        wzstring read_string(const size_t& len);
 
         [[nodiscard]]
         i32 read_compressed_int();
 
         [[nodiscard]]
-        std::wstring read_wz_string();
+        wzstring read_wz_string();
 
-        std::wstring read_string_block(const size_t& offset);
+        wzstring read_string_block(const size_t& offset);
 
         template<typename T> [[nodiscard]]
-        T read_wz_string_from_offset(const size_t& offset, std::wstring& out) {
+        T read_wz_string_from_offset(const size_t& offset, wzstring& out) {
             auto prev = cursor;
             set_position(offset);
             auto result = read<T>();
@@ -55,7 +58,7 @@ namespace wz {
             return result;
         }
 
-        std::wstring read_wz_string_from_offset(const size_t& offset);
+        wzstring read_wz_string_from_offset(const size_t& offset);
 
         [[nodiscard]]
         size_t get_position() const;

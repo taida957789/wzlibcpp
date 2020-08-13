@@ -1,5 +1,6 @@
 #include <cassert>
 #include <vector>
+#include <codecvt>
 #include "Reader.hpp"
 #include "Keys.hpp"
 
@@ -10,7 +11,7 @@ wz::Reader::Reader(wz::MutableKey& new_key, const char* file_path)
 }
 
 #ifdef _WIN32
-wz::Reader::Reader(const wchar_t* file_path)
+wz::Reader::Reader(const char16_t* file_path)
         : cursor(0) {
     std::error_code error_code;
     mmap = mio::make_mmap_source<decltype(file_path)>(file_path, error_code);
@@ -33,8 +34,8 @@ std::vector<u8> wz::Reader::read_bytes(const size_t& len) {
     return result;
 }
 
-auto wz::Reader::read_string() -> std::wstring {
-    std::wstring result {};
+wz::wzstring wz::Reader::read_string() {
+    wz::wzstring result {};
 
     while (true) {
         auto c = static_cast<char>(read_byte());
@@ -45,8 +46,8 @@ auto wz::Reader::read_string() -> std::wstring {
     return result;
 }
 
-auto wz::Reader::read_string(const size_t& len) -> std::wstring {
-    std::wstring result{};
+wz::wzstring wz::Reader::read_string(const size_t& len) {
+    wz::wzstring result{};
 
     for (int i = 0; i < len; ++i) {
         result.push_back(read_byte());
@@ -73,7 +74,7 @@ i32 wz::Reader::read_compressed_int() {
     return result;
 }
 
-std::wstring wz::Reader::read_wz_string() {
+wz::wzstring wz::Reader::read_wz_string() {
     auto len8 = read<i8>();
 
     if (len8 == 0) return {};
@@ -89,7 +90,7 @@ std::wstring wz::Reader::read_wz_string() {
             return {};
         }
 
-        std::wstring result{};
+        wz::wzstring result{};
 
         for (int i = 0; i < len; ++i) {
             auto encryptedChar = read<u16>();
@@ -114,13 +115,13 @@ std::wstring wz::Reader::read_wz_string() {
         return {};
     }
 
-    std::wstring result {};
+    wz::wzstring result {};
 
     for (int n = 0; n < len; ++n) {
         u8 encryptedChar = read_byte();
         encryptedChar ^= mask;
         encryptedChar ^= key[n];
-        result.push_back(static_cast<wchar_t>(encryptedChar));
+        result.push_back(static_cast<u16>(encryptedChar));
         mask++;
     }
 
@@ -133,12 +134,12 @@ mio::mmap_source::size_type wz::Reader::size() const {
 
 bool wz::Reader::is_wz_image() {
     if (read<u8>() != 0x73) return false;
-    if (read_wz_string() != L"Property") return false;
+    if (read_wz_string() != u"Property") return false;
     if (read<u16>() != 0) return false;
     return true;
 }
 
-std::wstring wz::Reader::read_string_block(const size_t& offset) {
+wz::wzstring wz::Reader::read_string_block(const size_t& offset) {
     switch (read<u8>()) {
         case 0: [[fallthrough]];
         case 0x73:
@@ -153,7 +154,7 @@ std::wstring wz::Reader::read_string_block(const size_t& offset) {
     return {};
 }
 
-std::wstring wz::Reader::read_wz_string_from_offset(const size_t& offset) {
+wz::wzstring wz::Reader::read_wz_string_from_offset(const size_t& offset) {
     auto prev = get_position();
     set_position(offset);
     auto result = read_wz_string();

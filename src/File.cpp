@@ -18,7 +18,7 @@ wz::File::File(u8* new_iv, const char* path)
 }
 
 #ifdef _WIN32
-wz::File::File(const std::initializer_list<u8>& new_iv, const wchar_t* path)
+wz::File::File(const std::initializer_list<u8>& new_iv, const char16_t* path)
     : reader(Reader(path)), root(new Node(reader)), key(new u8[0x10000]), iv(nullptr) {
     iv = new u8[4];
     memcpy(iv, new_iv.begin(), 4);
@@ -26,7 +26,7 @@ wz::File::File(const std::initializer_list<u8>& new_iv, const wchar_t* path)
     reader.set_key(key);
 }
 
-wz::File::File(u8* new_iv, const wchar_t* path)
+wz::File::File(u8* new_iv, const char16_t* path)
     : reader(Reader(path)), root(new Node(reader)), key(new u8[0x10000]), iv(new_iv) {
     init_key();
     reader.set_key(key);
@@ -40,7 +40,7 @@ wz::File::~File() {
 
 bool wz::File::parse() {
     auto magic = reader.read_string(4);
-    if (magic != L"PKG1") return false;
+    if (magic != u"PKG1") return false;
 
     auto fileSize = reader.read<u64>();
     auto startAt = reader.read<u32>();
@@ -85,7 +85,7 @@ bool wz::File::parse_directories(wz::Node* node) {
     for (int i = 0; i < entry_count; ++i) {
         auto type = reader.read_byte();
         size_t prevPos = 0;
-        std::wstring name;
+        wzstring name;
 
         if (type == 1) {
             reader.skip(sizeof(i32) + sizeof(u16));

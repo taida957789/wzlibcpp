@@ -20,7 +20,7 @@ wz::Node::~Node() {
     }
 }
 
-void wz::Node::appendChild(const std::wstring& name, Node* node) {
+void wz::Node::appendChild(const wzstring& name, Node* node) {
     assert(node);
     children[name].push_back(node);
     node->parent = this;
@@ -88,7 +88,7 @@ bool wz::Node::parse_property_list(Node* target, size_t offset) {
             }
                 break;
             case 8: {
-                auto* prop = new wz::Property<std::wstring>(Type::String, file);
+                auto* prop = new wz::Property<wzstring>(Type::String, file);
                 auto str = reader->read_string_block(offset);
                 prop->set(str);
                 target->appendChild(name, prop);
@@ -110,15 +110,15 @@ bool wz::Node::parse_property_list(Node* target, size_t offset) {
     return true;
 }
 
-void wz::Node::parse_extended_prop(const std::wstring& name, wz::Node* target, const size_t& offset) {
+void wz::Node::parse_extended_prop(const wzstring& name, wz::Node* target, const size_t& offset) {
     auto strPropName = reader->read_string_block(offset);
 
-    if (strPropName == L"Property") {
+    if (strPropName == u"Property") {
         auto* prop = new Property<WzSubProp>(Type::SubProperty, file);
         reader->skip(sizeof(u16));
         parse_property_list(prop, offset);
         target->appendChild(name, prop);
-    } else if (strPropName == L"Canvas") {
+    } else if (strPropName == u"Canvas") {
         auto* prop = new Property<WzCanvas>(Type::Canvas, file);
         reader->skip(sizeof(u8));
         if (reader->read<u8>() == 1) {
@@ -129,7 +129,7 @@ void wz::Node::parse_extended_prop(const std::wstring& name, wz::Node* target, c
         prop->set(parse_canvas_property());
 
         target->appendChild(name, prop);
-    } else if (strPropName == L"Shape2D#Vector2D") {
+    } else if (strPropName == u"Shape2D#Vector2D") {
         auto* prop = new Property<WzVec2D>(Type::Vector2D, file);
 
         auto x = reader->read_compressed_int();
@@ -137,7 +137,7 @@ void wz::Node::parse_extended_prop(const std::wstring& name, wz::Node* target, c
         prop->set({x, y});
 
         target->appendChild(name, prop);
-    } else if (strPropName == L"Shape2D#Convex2D") {
+    } else if (strPropName == u"Shape2D#Convex2D") {
         auto* prop = new Property<WzConvex>(Type::Convex2D, file);
 
         int convexEntryCount = reader->read_compressed_int();
@@ -146,13 +146,13 @@ void wz::Node::parse_extended_prop(const std::wstring& name, wz::Node* target, c
         }
 
         target->appendChild(name, prop);
-    } else if (strPropName == L"Sound_DX8") {
+    } else if (strPropName == u"Sound_DX8") {
         auto* prop = new Property<WzSound>(Type::Sound, file);
 
         prop->set(parse_sound_property());
 
         target->appendChild(name, prop);
-    } else if (strPropName == L"UOL") {
+    } else if (strPropName == u"UOL") {
         reader->skip(sizeof(u8));
         auto* prop = new Property<WzUOL>(Type::UOL, file);
         prop->set({ reader->read_string_block(offset) });
