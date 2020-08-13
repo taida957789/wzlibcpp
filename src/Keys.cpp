@@ -4,7 +4,7 @@ wz::MutableKey::MutableKey(const array<u8, 4>& new_iv, std::vector<u8> new_aes_k
     : iv(new_iv), aes_key(std::move(new_aes_key)) {
 }
 
-u8 wz::MutableKey::operator[](size_t index) {
+u8& wz::MutableKey::operator[](size_t index) {
     if (keys.empty() || keys.size() <= index) {
         ensure_key_size(index + 1);
     }

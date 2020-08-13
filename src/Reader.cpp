@@ -92,9 +92,9 @@ std::wstring wz::Reader::read_wz_string() {
         std::wstring result{};
 
         for (int i = 0; i < len; ++i) {
-            wchar_t encryptedChar = read<u16>();
+            auto encryptedChar = read<u16>();
             encryptedChar ^= mask;
-            encryptedChar ^= *reinterpret_cast<wchar_t*>(key[2 * i]);
+            encryptedChar ^= *reinterpret_cast<u16*>(&key[2 * i]);
             result.push_back(encryptedChar);
             mask++;
         }

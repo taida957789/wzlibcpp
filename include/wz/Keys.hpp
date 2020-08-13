@@ -102,7 +102,7 @@ namespace wz {
 
         explicit MutableKey(const std::array<u8, 4>& new_iv, std::vector<u8> new_aes_key);
 
-        u8 operator[] (size_t index);
+        u8& operator[] (size_t index);
 
     private:
         static constexpr auto batch_size = 4096;
