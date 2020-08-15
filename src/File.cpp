@@ -3,6 +3,7 @@
 #include "Wz.hpp"
 #include "Directory.hpp"
 
+[[maybe_unused]]
 wz::File::File(const std::initializer_list<u8>& new_iv, const char* path)
     : reader(Reader(key, path)), root(new Node(Type::NotSet, this)), key(), iv(nullptr) {
     iv = new u8[4];
@@ -11,27 +12,12 @@ wz::File::File(const std::initializer_list<u8>& new_iv, const char* path)
     reader.set_key(key);
 }
 
+[[maybe_unused]]
 wz::File::File(u8* new_iv, const char* path)
     : reader(Reader(key, path)), root(new Node(Type::NotSet, this)), key(), iv(new_iv) {
     init_key();
     reader.set_key(key);
 }
-
-#ifdef _WIN32
-wz::File::File(const std::initializer_list<u8>& new_iv, const char16_t* path)
-    : reader(Reader(path)), root(new Node(reader)), key(new u8[0x10000]), iv(nullptr) {
-    iv = new u8[4];
-    memcpy(iv, new_iv.begin(), 4);
-    init_key();
-    reader.set_key(key);
-}
-
-wz::File::File(u8* new_iv, const char16_t* path)
-    : reader(Reader(path)), root(new Node(reader)), key(new u8[0x10000]), iv(new_iv) {
-    init_key();
-    reader.set_key(key);
-}
-#endif
 
 wz::File::~File() {
     delete[] iv;
