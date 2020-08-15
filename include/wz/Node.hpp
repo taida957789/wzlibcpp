@@ -24,7 +24,11 @@ namespace wz {
 
         virtual ~Node();
 
+        Node& operator[] (const wzstring& name);
+
         virtual void appendChild(const wzstring& name, Node* node);
+
+        Node* get_child(const wzstring& name);
 
         [[maybe_unused]] [[nodiscard]]
         virtual const WzMap& get_children() const;

@@ -27,8 +27,10 @@ namespace wz {
 
         [[maybe_unused]] [[nodiscard]]
         Node* get_root() const;
+        Node& get_child(const wzstring& name);
 
         MutableKey key;
+
 
     private:
 

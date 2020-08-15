@@ -168,3 +168,7 @@ void wz::File::init_key() {
     memcpy(aes_key_v.data(), wz::AesKey2, 32);
     key = MutableKey({iv[0], iv[1], iv[2], iv[3]}, aes_key_v);
 }
+
+wz::Node& wz::File::get_child(const wzstring& name) {
+    return *root->get_child(name);
+}

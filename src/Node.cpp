@@ -238,3 +238,14 @@ wz::MutableKey& wz::Node::get_key() const {
 u8* wz::Node::get_iv() const {
     return file->iv;
 }
+
+wz::Node* wz::Node::get_child(const wz::wzstring& name) {
+    if (auto it = children.find(name); it != children.end()) {
+        return it->second[0];
+    }
+    return nullptr;
+}
+
+wz::Node& wz::Node::operator[](const wz::wzstring& name) {
+    return *get_child(name);
+}
