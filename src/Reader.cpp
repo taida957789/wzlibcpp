@@ -10,14 +10,6 @@ wz::Reader::Reader(wz::MutableKey& new_key, const char* file_path)
     mmap = mio::make_mmap_source<decltype(file_path)>(file_path, error_code);
 }
 
-#ifdef _WIN32
-wz::Reader::Reader(const char16_t* file_path)
-        : cursor(0) {
-    std::error_code error_code;
-    mmap = mio::make_mmap_source<decltype(file_path)>(file_path, error_code);
-}
-#endif
-
 u8 wz::Reader::read_byte() {
     return mmap[cursor++];
 }

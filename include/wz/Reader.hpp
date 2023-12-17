@@ -12,10 +12,6 @@ namespace wz {
     public:
         explicit Reader(wz::MutableKey& new_key, const char* file_path);
 
-#ifdef _WIN32
-        explicit Reader(const char16_t* file_path);
-#endif
-
         template<typename T> [[nodiscard]]
         T read() {
             auto result = *reinterpret_cast<T*>(&mmap[cursor]);

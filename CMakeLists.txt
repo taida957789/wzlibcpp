@@ -2,12 +2,14 @@ cmake_minimum_required(VERSION 3.17)
 project(wzlibcpp)
 
 set(CMAKE_CXX_STANDARD 17)
-set(VCPKG_CMAKE_PATH "F:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
-if (WIN32)
-    include(${VCPKG_CMAKE_PATH})
-endif (WIN32)
+set(ZLIB_LIBRARY "zlib/lib")
+set(ZLIB_INCLUDE_DIR "zlib/include")
 
+set(CMAKE_CXX_FLAGS "-fpermissive")
+
+MESSAGE(${CMAKE_CXX_COMPILER_ID})
+       
 find_package(ZLIB REQUIRED)
 
 include_directories(
