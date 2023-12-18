@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <fstream> // 包含文件操作的头文件
+#include "Keys.hpp"
 
 template <typename T>
 constexpr auto strings(T iterable)
@@ -96,21 +97,26 @@ int main()
                         // wz::Property b=wz::Property(a.at(0)->get_child(u"arm"));
                         auto c = a.at(0)->get_child(u"arm");
                         auto d = dynamic_cast<wz::Property<wz::WzCanvas> *>(c);
-                        // c->get_png();
+                        d->get_png();
                         wz::WzCanvas canvas = d->get();
                         canvas.offset;
                         d->reader->set_position(canvas.offset);
-                        size_t end_offset = d->reader->get_position() + canvas.size;
+
                         std::vector<u8> data_stream;
-                        while (d->reader->get_position() < end_offset)
+                        u16 cc = d->reader->read_i16();
+                        if (cc == 0x9C78)
                         {
-                            auto block_size = d->reader->read<i32>();
-                            for (size_t i = 0; i < block_size; ++i)
-                            {
-                                data_stream.push_back(
-                                    static_cast<u8>(d->reader->read_byte()));
-                            }
+                            /* code */
                         }
+                        else
+                        {
+                            d->reader->set_position(canvas.offset);
+                            size_t end_offset = d->reader->get_position() + canvas.size;
+                            // auto wz_key = wz::MutableKey(iv, wz::get_trimmed_user_key());
+                            size_t end_offset1 = d->reader->get_position() + canvas.size;
+
+                        }
+
                         std::ofstream outfile("./output.png", ios::binary);
                         auto buf = d->get_png();
                         int size = buf.size();

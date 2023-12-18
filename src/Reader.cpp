@@ -66,6 +66,11 @@ i32 wz::Reader::read_compressed_int() {
     return result;
 }
 
+i16 wz::Reader::read_i16() {
+    i16 result = static_cast<i16>(read<i16>());
+    return result;
+}
+
 wz::wzstring wz::Reader::read_wz_string() {
     auto len8 = read<i8>();
 

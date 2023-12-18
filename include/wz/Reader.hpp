@@ -39,6 +39,8 @@ namespace wz {
         [[nodiscard]]
         i32 read_compressed_int();
 
+        i16 read_i16();
+
         [[nodiscard]]
         wzstring read_wz_string();
 
