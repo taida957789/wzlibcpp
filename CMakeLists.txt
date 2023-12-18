@@ -7,8 +7,6 @@ set(ZLIB_LIBRARY "zlib/lib")
 set(ZLIB_INCLUDE_DIR "zlib/include")
 
 set(CMAKE_CXX_FLAGS "-fpermissive")
-set(CMAKE_BUILD_TYPE "Release")
-
 MESSAGE(${CMAKE_CXX_COMPILER_ID})
        
 find_package(ZLIB REQUIRED)
