@@ -11,6 +11,12 @@
 
 #include <iostream>
 #include <fstream> // 包含文件操作的头文件
+#include "Reader.hpp"
+#include "Node.hpp"
+#include <winuser.h>
+#include "File.hpp"
+#include "Directory.hpp"
+#include "Types.hpp"
 
 template <typename T>
 constexpr auto strings(T iterable)
@@ -90,21 +96,33 @@ int main()
                     {
                         /* code */
                         auto aa = n.second[0]->get_children();
-                        auto a=aa.at(u"0");
+                        auto a = aa.at(u"0");
                         // wz::Property p(wz::WzCanvas,file,a);
                         // dir->parse_canvas_property();
                         // wz::Property b=wz::Property(a.at(0)->get_child(u"arm"));
-                        auto c=a.at(0)->get_child(u"arm");
-                        auto d=dynamic_cast<wz::Property<wz::WzCanvas>*>(c);
+                        auto c = a.at(0)->get_child(u"arm");
+                        auto d = dynamic_cast<wz::Property<wz::WzCanvas> *>(c);
                         // c->get_png();
                         wz::WzCanvas canvas = d->get();
                         canvas.offset;
+                        d->reader->set_position(canvas.offset);
+                        size_t end_offset = d->reader->get_position() + canvas.size;
+                        std::vector<u8> data_stream;
+                        while (d->reader->get_position() < end_offset)
+                        {
+                            auto block_size = d->reader->read<i32>();
+                            for (size_t i = 0; i < block_size; ++i)
+                            {
+                                data_stream.push_back(
+                                    static_cast<u8>(d->reader->read_byte()));
+                            }
+                        }
                         std::ofstream outfile("./output.png", ios::binary);
-                        auto buf=d->get_png();
+                        auto buf = d->get_png();
                         int size = buf.size();
                         unsigned arr[size];
                         std::copy(buf.begin(), buf.end(), arr);
-                        outfile.write((char*)arr, sizeof(arr));
+                        outfile.write((char *)arr, sizeof(arr));
                         std::cout << std::endl;
                         outfile.close();
                         return 1;
