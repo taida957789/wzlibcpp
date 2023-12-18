@@ -97,6 +97,8 @@ int main()
                         auto c=a.at(0)->get_child(u"arm");
                         auto d=dynamic_cast<wz::Property<wz::WzCanvas>*>(c);
                         // c->get_png();
+                        wz::WzCanvas canvas = d->get();
+                        canvas.offset;
                         std::ofstream outfile("./output.png", ios::binary);
                         auto buf=d->get_png();
                         int size = buf.size();

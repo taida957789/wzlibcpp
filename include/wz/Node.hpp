@@ -51,7 +51,7 @@ namespace wz {
         [[nodiscard]]
         bool is_property() const;
 
-    protected:
+    public:
 
         Type type;
 
