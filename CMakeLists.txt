@@ -16,12 +16,23 @@ include_directories(
         include
         include/wz
         mio/include
+        pystring
         ${ZLIB_INCLUDE_DIR})
 
-file(GLOB SOURCE_FILES src/*.cpp)
+file(GLOB SOURCE_FILES src/*.cpp pystring/pystring.cpp)
 file(GLOB AES_SOURCE_FILES AES/AES.cpp)
 
-
-
-add_library(wzlibcpp ${SOURCE_FILES} ${AES_SOURCE_FILES})
+add_library(wzlib ${SOURCE_FILES} ${AES_SOURCE_FILES})
 target_link_libraries(ZLIB::ZLIB)
+
+
+project(wzlibtest)
+file(GLOB LIB_FILES *.a ${ZLIB_LIBRARY}/*.lib)
+
+add_executable(wzlibtest main/main.cpp ${SOURCE_FILES})
+target_link_libraries(
+        wzlibtest
+        PRIVATE
+        wzlib
+        ${LIB_FILES}  
+)

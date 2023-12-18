@@ -44,7 +44,7 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_png(std::array<u8, 4> iv)
 
     size_t len;
     u8 *uncompressed = new u8[8192];
-    uncompress(uncompressed, (uLongf *)&len, data_stream.data(), data_stream.size());
+    uncompress(uncompressed, (unsigned long*)&len, data_stream.data(), data_stream.size());
     std::vector<u8> buffer(canvas.uncompressed_size);
     memcpy(buffer.data(), uncompressed, canvas.uncompressed_size);
     delete[] uncompressed;
