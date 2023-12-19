@@ -1,20 +1,21 @@
 #include "Property.hpp"
 #include "Types.hpp"
 
-static void *myalloc(void *q, unsigned n, unsigned m)
+std::vector<u8> get_pixel_data_Bgra4444(vector<u8> rawData, int width, int height)
 {
-    (void)q;
-    return calloc(n, m);
+    u8 argb[width * height * 4];
+    int p;
+    for (int i = 0; i < rawData.size(); i++)
+    {
+        p = rawData[i] & 0x0F;
+        p |= (p << 4);
+        argb[i * 2] = p;
+        p = rawData[i] & 0xF0;
+        p |= (p >> 4);
+        argb[i * 2 + 1] = p;
+    }
+    return vector<u8>(argb, argb + width * height * 4);
 }
-
-static void myfree(void *q, void *p)
-{
-    (void)q;
-    free(p);
-}
-
-static alloc_func zalloc = myalloc;
-static free_func zfree = myfree;
 
 template <>
 std::vector<u8> wz::Property<wz::WzCanvas>::get_png(std::array<u8, 4> iv)
@@ -69,6 +70,19 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_png(std::array<u8, 4> iv)
         {
             pixel_stream.push_back(uncompressed[i]);
         }
+        switch (canvas.format)
+        {
+        case 1: //16位argb4444
+            pixel_stream=get_pixel_data_Bgra4444(pixel_stream,canvas.width,canvas.height);
+            break;
+        case 2:
+
+            break;
+
+        default:
+            break;
+        }
         return pixel_stream;
     }
 }
+
