@@ -1,6 +1,21 @@
 #include "Property.hpp"
 #include "Types.hpp"
 
+static void *myalloc(void *q, unsigned n, unsigned m)
+{
+    (void)q;
+    return calloc(n, m);
+}
+
+static void myfree(void *q, void *p)
+{
+    (void)q;
+    free(p);
+}
+
+static alloc_func zalloc = myalloc;
+static free_func zfree = myfree;
+
 template <>
 std::vector<u8> wz::Property<wz::WzCanvas>::get_png(std::array<u8, 4> iv)
 {
@@ -39,6 +54,21 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_png(std::array<u8, 4> iv)
                     static_cast<u8>(reader->read_byte() ^ n));
             }
         }
-        printf("123");
+        for (size_t i = data_stream.size(); i < canvas.size; ++i)
+        {
+            data_stream.push_back(0);
+        }
+
+        size_t uncompressed_len = data_stream.size() * 4;
+        u8 uncompressed[uncompressed_len];
+        uncompress(uncompressed, (unsigned long *)&uncompressed_len, data_stream.data(), data_stream.size());
+
+        size_t pixel_data_len = canvas.width * canvas.height * 2;
+        std::vector<u8> pixel_stream;
+        for (size_t i = pixel_stream.size(); i < pixel_data_len; ++i)
+        {
+            pixel_stream.push_back(uncompressed[i]);
+        }
+        return pixel_stream;
     }
 }
