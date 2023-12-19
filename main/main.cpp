@@ -14,7 +14,7 @@
 #include "Keys.hpp"
 
 template <typename T>
-constexpr auto strings(T iterable)
+constexpr auto ustring(T iterable)
 {
     return std::u16string{iterable.begin(), iterable.end()};
 }
@@ -33,28 +33,36 @@ T pop(std::vector<T> &vec)
     return last;
 }
 
-wz::WzMap find_from_path(wz::Node *root, const std::u16string &path)
+wz::Node* find_from_path(wz::Node *root, const std::u16string &path)
 {
     std::vector<std::string> next{};
     std::string s{};
     s.assign(path.begin(), path.end());
     pystring::split(s, next, "/");
-    std::reverse(next.begin(), next.end());
-    const auto current = strings(pop(next));
-    for (const auto &it : *root)
+    wz::Node *node = root;
+    for (auto s : next)
     {
-        if (it.first == current)
+        for (const auto &it : *node)
         {
-            if (next.empty())
+            if (it.first == ustring(s))
             {
-                return root->get_children();
+                auto *dir = dynamic_cast<wz::Directory *>(it.second[0]);
+                if (dir->is_image())
+                {
+                    auto *image = new wz::Node();
+                    dir->parse_image(image);
+                    node = image;
+                    break;
+                }
+                else
+                {
+                    node = it.second[0];
+                    break;
+                }
             }
-
-            std::reverse(next.begin(), next.end());
-            return find_from_path(root, strings(pystring::join("/", next)));
         }
     }
-    return {};
+    return node;
 }
 
 #define U8 static_cast<u8>
@@ -70,55 +78,26 @@ int main()
 
     if (file.parse())
     {
-        wz::WzMap node = find_from_path(file.get_root(), u"00002000.img");
-        for (const auto &it : node)
+        wz::Node* node = find_from_path(file.get_root(), u"00012000.img");
+        for (const auto &it : *node)
         {
-            // for (const auto &c : it.first)
-            // {
-            //     std::cout << static_cast<char>(c);
-            // }
-            // std::cout<<std::endl;
-            // std::wcout << it.first << ", " << it.second.size() << std::endl;
-            auto *dir = dynamic_cast<wz::Directory *>(it.second[0]);
-            if (dir && dir->is_image())
+            if (it.first == u"front")
             {
-                auto *image = new wz::Node();
-                dir->parse_image(image);
-
-                for (const auto &n : *image)
-                {
-                    if (n.first == u"alert")
-                    {
-                        /* code */
-                        auto aa = n.second[0]->get_children();
-                        auto a = aa.at(u"0");
-                        // wz::Property p(wz::WzCanvas,file,a);
-                        // dir->parse_canvas_property();
-                        // wz::Property b=wz::Property(a.at(0)->get_child(u"arm"));
-                        auto c = a.at(0)->get_child(u"arm");
-                        auto d = dynamic_cast<wz::Property<wz::WzCanvas> *>(c);
-                        std::ofstream outfile("./output.bmp", ios::binary);
-                        auto buf = d->get_png();
-                        int size = buf.size();
-                        outfile.write((char *)buf.data(), size);
-                        std::cout << std::endl;
-                        outfile.close();
-                        return 1;
-                    }
-
-                    for (const auto &c : n.first)
-                    {
-                        std::cout << static_cast<char>(c);
-                    }
-                    std::cout << std::endl;
-                }
+                /* code */
+                auto aa = it.second[0]->get_children();
+                auto a = aa.at(u"head");
+                auto c = a.at(0);
+                auto d = dynamic_cast<wz::Property<wz::WzCanvas> *>(c);
+                std::ofstream outfile("./output.rgb", ios::binary);
+                auto buf = d->get_png();
+                int size = buf.size();
+                outfile.write((char *)buf.data(), size);
+                std::cout << std::endl;
+                outfile.close();
+                return 1;
             }
         }
     }
-    else
-    {
-        printf("fail");
-    }
-    _sleep(90000000);
-    return 0;
+_sleep(90000000);
+return 0;
 }
