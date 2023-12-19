@@ -100,8 +100,7 @@ int main()
                         std::ofstream outfile("./output.bmp", ios::binary);
                         auto buf = d->get_png();
                         int size = buf.size();
-                        unsigned arr[size];
-                        outfile.write((char *)arr, sizeof(arr));
+                        outfile.write((char *)buf.data(), size);
                         std::cout << std::endl;
                         outfile.close();
                         return 1;
