@@ -97,31 +97,10 @@ int main()
                         // wz::Property b=wz::Property(a.at(0)->get_child(u"arm"));
                         auto c = a.at(0)->get_child(u"arm");
                         auto d = dynamic_cast<wz::Property<wz::WzCanvas> *>(c);
-                        d->get_png();
-                        wz::WzCanvas canvas = d->get();
-                        canvas.offset;
-                        d->reader->set_position(canvas.offset);
-
-                        std::vector<u8> data_stream;
-                        u16 cc = d->reader->read_i16();
-                        if (cc == 0x9C78)
-                        {
-                            /* code */
-                        }
-                        else
-                        {
-                            d->reader->set_position(canvas.offset);
-                            size_t end_offset = d->reader->get_position() + canvas.size;
-                            // auto wz_key = wz::MutableKey(iv, wz::get_trimmed_user_key());
-                            size_t end_offset1 = d->reader->get_position() + canvas.size;
-
-                        }
-
-                        std::ofstream outfile("./output.png", ios::binary);
+                        std::ofstream outfile("./output.bmp", ios::binary);
                         auto buf = d->get_png();
                         int size = buf.size();
                         unsigned arr[size];
-                        std::copy(buf.begin(), buf.end(), arr);
                         outfile.write((char *)arr, sizeof(arr));
                         std::cout << std::endl;
                         outfile.close();
