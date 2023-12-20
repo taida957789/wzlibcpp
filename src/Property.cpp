@@ -7,6 +7,7 @@ enum PixelFormat
 
 };
 
+//直接获取纹理格式数据，可以直接导入到游戏引擎使用
 template <>
 std::vector<u8> wz::Property<wz::WzCanvas>::get_raw_data(std::array<u8, 4> iv)
 {
