@@ -42,10 +42,10 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_png(std::array<u8, 4> iv)
                     static_cast<u8>(reader->read_byte() ^ n));
             }
         }
-        for (size_t i = data_stream.size(); i < canvas.size; ++i)
-        {
-            data_stream.push_back(0);
-        }
+        // for (size_t i = data_stream.size(); i < canvas.size; ++i)
+        // {
+        //     data_stream.push_back(0);
+        // }
         uncompress(uncompressed, (unsigned long *)&uncompressed_len, data_stream.data(), data_stream.size());
     }
 
