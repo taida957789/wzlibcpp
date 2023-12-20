@@ -3,7 +3,6 @@
 
 #include <algorithm>
 
-#include <wz/Wz.hpp>
 #include <wz/Node.hpp>
 #include <wz/File.hpp>
 #include <wz/Directory.hpp>
@@ -11,7 +10,6 @@
 
 #include <iostream>
 #include <fstream> // 包含文件操作的头文件
-#include "Keys.hpp"
 
 #define U8 static_cast<u8>
 #define IV4(A, B, C, D)            \
