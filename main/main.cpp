@@ -40,16 +40,16 @@ wz::Node *find_from_path(wz::Node *root, const std::u16string &path)
     s.assign(path.begin(), path.end());
     pystring::split(s, next, "/");
     wz::Node *node = root;
-    for (auto s : next)
+    for (auto str : next)
     {
         for (const auto &it : *node)
         {
-            if (it.first == ustring(s))
+            if (it.first == ustring(str))
             {
-                auto *dir = dynamic_cast<wz::Directory *>(it.second[0]);
-                if (dir->is_image())
+                if (it.second[0]->type == wz::Type::Image)
                 {
                     auto *image = new wz::Node();
+                    auto *dir = dynamic_cast<wz::Directory *>(it.second[0]);
                     dir->parse_image(image);
                     node = image;
                     break;
@@ -78,25 +78,14 @@ int main()
 
     if (file.parse())
     {
-        wz::Node *node = find_from_path(file.get_root(), u"00012000.img");
-        for (const auto &it : *node)
-        {
-            if (it.first == u"front")
-            {
-                /* code */
-                auto aa = it.second[0]->get_children();
-                auto a = aa.at(u"head");
-                auto c = a.at(0);
-                auto d = dynamic_cast<wz::Property<wz::WzCanvas> *>(c);
-                std::ofstream outfile("./output.rgb", ios::binary);
-                auto buf = d->get_png();
-                int size = buf.size();
-                outfile.write((char *)buf.data(), size);
-                std::cout << std::endl;
-                outfile.close();
-                return 1;
-            }
-        }
+        wz::Node *node = find_from_path(file.get_root(), u"00002000.img/alert/0/body");
+        auto canvans = dynamic_cast<wz::Property<wz::WzCanvas> *>(node);
+        std::ofstream outfile("./output.rgb", ios::binary);
+        auto buf = canvans->get_raw_data();
+        int size = buf.size();
+        outfile.write((char *)buf.data(), size);
+        outfile.close();
+        return 1;
     }
     _sleep(90000000);
     return 0;
