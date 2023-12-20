@@ -74,11 +74,11 @@ wz::Node *find_from_path(wz::Node *root, const std::u16string &path)
 int main()
 {
     const auto iv = IV4(0xb9, 0x7d, 0x63, 0xe9);
-    wz::File file(iv, "C:/Users/Shocker/Desktop/StudyMS/Data/Character.wz");
+    wz::File file(iv, "C:/Users/Shocker/Desktop/StudyMS/Data/Map.wz");
 
     if (file.parse())
     {
-        wz::Node *node = find_from_path(file.get_root(), u"00002000.img/alert/0/body");
+        wz::Node *node = find_from_path(file.get_root(), u"Back/CakeVillageTW.img/back/3");
         auto canvans = dynamic_cast<wz::Property<wz::WzCanvas> *>(node);
         std::ofstream outfile("./output.rgb", ios::binary);
         auto buf = canvans->get_raw_data();

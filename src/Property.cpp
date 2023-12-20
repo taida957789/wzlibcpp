@@ -44,7 +44,7 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_raw_data(std::array<u8, 4> iv)
         uncompress(uncompressed, (unsigned long *)&uncompressed_len, data_stream.data(), data_stream.size());
     }
 
-    std::vector<u8> pixel_stream(uncompressed,uncompressed+uncompressed_len);
+    std::vector<u8> pixel_stream(uncompressed, uncompressed + uncompressed_len);
     switch (canvas.format)
     {
     case 1: // 16位argb4444
