@@ -16,15 +16,17 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_png(std::array<u8, 4> iv)
     reader->set_position(canvas.offset);
     size_t end_offset = reader->get_position() + canvas.size;
     std::vector<u8> pixel_stream;
-    size_t uncompressed_len = canvas.uncompressed_size;
+    unsigned long uncompressed_len = canvas.uncompressed_size;
+    // u8 *uncompressed = new u8[uncompressed_len];
     u8 uncompressed[uncompressed_len] = {0};
-    if (reader->read<u16>() == 0x9C78)
+    if (!canvas.is_encrypted)
     {
-        for (size_t i = 0; i < canvas.size - 2; ++i)
+        for (size_t i = 0; i < canvas.size; ++i)
         {
             data_stream.push_back(reader->read_byte());
         }
-        auto err=uncompress(uncompressed, (unsigned long *)&uncompressed_len, data_stream.data(), data_stream.size());
+        int len = data_stream.size();
+        uncompress(uncompressed, &uncompressed_len, data_stream.data(), data_stream.size());
     }
     else
     {

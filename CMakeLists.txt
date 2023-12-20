@@ -27,7 +27,7 @@ target_link_libraries(ZLIB::ZLIB)
 
 
 project(wzlibtest)
-file(GLOB LIB_FILES *.a ${ZLIB_LIBRARY}/*.lib)
+file(GLOB LIB_FILES *.a ${ZLIB_LIBRARY}/*.a)
 
 add_executable(wzlibtest main/main.cpp ${SOURCE_FILES})
 target_link_libraries(
