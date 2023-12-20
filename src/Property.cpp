@@ -15,7 +15,6 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_png(std::array<u8, 4> iv)
     std::vector<u8> data_stream;
     reader->set_position(canvas.offset);
     size_t end_offset = reader->get_position() + canvas.size;
-    std::vector<u8> pixel_stream;
     unsigned long uncompressed_len = canvas.uncompressed_size;
     // u8 *uncompressed = new u8[uncompressed_len];
     u8 uncompressed[uncompressed_len] = {0};
@@ -49,12 +48,7 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_png(std::array<u8, 4> iv)
         uncompress(uncompressed, (unsigned long *)&uncompressed_len, data_stream.data(), data_stream.size());
     }
 
-    size_t pixel_data_len = canvas.width * canvas.height * 2;
-    for (size_t i = pixel_stream.size(); i < pixel_data_len; ++i)
-    {
-        pixel_stream.push_back(uncompressed[i]);
-    }
-
+    std::vector<u8> pixel_stream(uncompressed,uncompressed+uncompressed_len);
     switch (canvas.format)
     {
     case 1: // 16位argb4444

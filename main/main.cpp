@@ -33,7 +33,7 @@ T pop(std::vector<T> &vec)
     return last;
 }
 
-wz::Node* find_from_path(wz::Node *root, const std::u16string &path)
+wz::Node *find_from_path(wz::Node *root, const std::u16string &path)
 {
     std::vector<std::string> next{};
     std::string s{};
@@ -78,7 +78,7 @@ int main()
 
     if (file.parse())
     {
-        wz::Node* node = find_from_path(file.get_root(), u"00012000.img");
+        wz::Node *node = find_from_path(file.get_root(), u"00012000.img");
         for (const auto &it : *node)
         {
             if (it.first == u"front")
@@ -98,6 +98,6 @@ int main()
             }
         }
     }
-_sleep(90000000);
-return 0;
+    _sleep(90000000);
+    return 0;
 }
