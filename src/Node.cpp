@@ -2,6 +2,8 @@
 #include "Node.hpp"
 #include "Property.hpp"
 #include "File.hpp"
+#include <pystring.h>
+#include "Directory.hpp"
 
 wz::Node::Node()
         : parent(nullptr), file(nullptr), type(Type::NotSet) {
@@ -248,4 +250,58 @@ wz::Node* wz::Node::get_child(const wz::wzstring& name) {
 
 wz::Node& wz::Node::operator[](const wz::wzstring& name) {
     return *get_child(name);
+}
+
+
+
+template <typename T>
+constexpr auto ustring(T iterable)
+{
+    return std::u16string{iterable.begin(), iterable.end()};
+}
+
+template <typename T>
+constexpr auto back(T iterable)
+{
+    return std::string{iterable.begin(), iterable.end()};
+}
+
+template <typename T>
+T pop(std::vector<T> &vec)
+{
+    auto last = vec.back();
+    vec.pop_back();
+    return last;
+}
+
+wz::Node *wz::Node::find_from_path(const std::u16string &path)
+{
+    std::vector<std::string> next{};
+    std::string s{};
+    s.assign(path.begin(), path.end());
+    pystring::split(s, next, "/");
+    wz::Node *node = this;
+    for (auto str : next)
+    {
+        for (const auto &it : *node)
+        {
+            if (it.first == ustring(str))
+            {
+                if (it.second[0]->type == wz::Type::Image)
+                {
+                    auto *image = new wz::Node();
+                    auto *dir = dynamic_cast<wz::Directory *>(it.second[0]);
+                    dir->parse_image(image);
+                    node = image;
+                    break;
+                }
+                else
+                {
+                    node = it.second[0];
+                    break;
+                }
+            }
+        }
+    }
+    return node;
 }

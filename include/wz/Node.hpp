@@ -51,6 +51,8 @@ namespace wz {
         [[nodiscard]]
         bool is_property() const;
 
+        Node* find_from_path(const std::u16string &path);
+
     public:
 
         Type type;
