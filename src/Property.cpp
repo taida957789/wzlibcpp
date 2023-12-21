@@ -7,6 +7,16 @@ enum PixelFormat
     FORMAT_RGBA4444=6,
 };
 
+void convert_argb4444_to_rgba4444(std::vector<u8>& pixels) {
+    for (unsigned int i = 0; i < pixels.size(); i += 2) {
+        unsigned char r = (pixels[i] & 0xF0) >> 4;  // Extract 4 bits for red
+        unsigned char g = (pixels[i] & 0x0F) << 4 | (pixels[i + 1] & 0xF0) >> 4;  // Extract 4 bits for green and arrange
+        unsigned char b = (pixels[i + 1] & 0x0F) << 4;  // Extract 4 bits for blue
+        pixels[i] = (r << 4) | (g >> 4);  // Rearrange bytes to form new pixel
+        pixels[i + 1] = (g << 4) | b;
+    }
+}
+
 //直接获取纹理格式数据，可以直接导入到游戏引擎使用
 template <>
 std::vector<u8> wz::Property<wz::WzCanvas>::get_raw_data(std::array<u8, 4> iv)
@@ -45,6 +55,7 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_raw_data(std::array<u8, 4> iv)
     }
 
     std::vector<u8> pixel_stream(uncompressed, uncompressed + uncompressed_len);
+    convert_argb4444_to_rgba4444(pixel_stream);
     switch (canvas.format)
     {
     case 1: // 16位argb4444
