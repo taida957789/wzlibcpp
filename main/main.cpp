@@ -20,12 +20,13 @@
 int main()
 {
     const auto iv = IV4(0xb9, 0x7d, 0x63, 0xe9);
-    wz::File file(iv, "C:/Users/Shocker/Desktop/StudyMS/Data/Map.wz");
+    wz::File file(iv, "C:/Users/Shocker/Desktop/gdtest/Data/Map.wz");
 
     if (file.parse())
     {
-        wz::Node *node=file.get_root()->find_from_path(u"Back/CakeVillageTW.img/back/3");
+        wz::Node *node=file.get_root()->find_from_path(u"Map/Map1/101000000.img");
         // wz::Node *node = wz::Node::find_from_path(file.get_root(), );
+        auto layer=node->children[u"0"];
         auto canvans = dynamic_cast<wz::Property<wz::WzCanvas> *>(node);
         std::ofstream outfile("./output.rgb", ios::binary);
         auto buf = canvans->get_raw_data();

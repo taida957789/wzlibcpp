@@ -7,15 +7,15 @@ enum PixelFormat
     FORMAT_RGBA4444 = 6,
 };
 
-void convert_argb4444_to_rgba4444(std::vector<u8> &pixelData)
+void convert_bgra4444_to_rgba4444(std::vector<u8> &pixelData)
 {
     for (int i = 0; i < pixelData.size(); i += 2)
     {
-        u16 argb4444Pixel = (u16)((pixelData[i + 1] << 8) | pixelData[i]);
-        u16 a = (u16)((argb4444Pixel & 0xF000) >> 12);
-        u16 r = (u16)((argb4444Pixel & 0x0F00) >> 8);
-        u16 g = (u16)((argb4444Pixel & 0x00F0) >> 4);
-        u16 b = (u16)(argb4444Pixel & 0x000F);
+        u16 bgra4444Pixel = (u16)((pixelData[i + 1] << 8) | pixelData[i]);
+        u16 a = (u16)((bgra4444Pixel & 0xF000) >> 12);
+        u16 r = (u16)((bgra4444Pixel & 0x0F00) >> 8);
+        u16 g = (u16)((bgra4444Pixel & 0x00F0) >> 4);
+        u16 b = (u16)(bgra4444Pixel & 0x000F);
 
         // Convert to RGBA4444
         u16 rgba4444Pixel = (u16)((r << 12) | (g << 8) | (b << 4) | a);
@@ -24,6 +24,24 @@ void convert_argb4444_to_rgba4444(std::vector<u8> &pixelData)
         pixelData[i] = (u8)(rgba4444Pixel & 0xFF);
         pixelData[i + 1] = (u8)((rgba4444Pixel >> 8) & 0xFF);
     }
+}
+
+void convert_bgra8888_to_rgba8888(std::vector<u8> &pixelData)
+{
+
+    for (int i = 0; i < pixelData.size(); i += 4)
+    {
+        u8 b = pixelData[i];
+        u8 g = pixelData[i + 1];
+        u8 r = pixelData[i + 2];
+        u8 a = pixelData[i + 3];
+
+        pixelData[i] = r;
+        pixelData[i + 1] = g;
+        pixelData[i + 2] = b;
+        pixelData[i + 3] = a;
+    }
+    return;
 }
 
 // 直接获取纹理格式数据，可以直接导入到游戏引擎使用
@@ -73,6 +91,6 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_raw_data(std::array<u8, 4> iv)
     default:
         break;
     }
-    convert_argb4444_to_rgba4444(pixel_stream);
+    convert_bgra4444_to_rgba4444(pixel_stream);
     return pixel_stream;
 }
