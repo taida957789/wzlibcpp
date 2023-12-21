@@ -17,8 +17,7 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_raw_data(std::array<u8, 4> iv)
     reader->set_position(canvas.offset);
     size_t end_offset = reader->get_position() + canvas.size;
     unsigned long uncompressed_len = canvas.uncompressed_size;
-    // u8 *uncompressed = new u8[uncompressed_len];
-    u8 uncompressed[uncompressed_len] = {0};
+    u8 *uncompressed = new u8[uncompressed_len];
     if (!canvas.is_encrypted)
     {
         for (size_t i = 0; i < canvas.size; ++i)
