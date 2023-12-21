@@ -4,20 +4,29 @@
 enum PixelFormat
 {
     FORMAT_RGBA8 = 5,
-    FORMAT_RGBA4444=6,
+    FORMAT_RGBA4444 = 6,
 };
 
-void convert_argb4444_to_rgba4444(std::vector<u8>& pixels) {
-    for (unsigned int i = 0; i < pixels.size(); i += 2) {
-        unsigned char r = (pixels[i] & 0xF0) >> 4;  // Extract 4 bits for red
-        unsigned char g = (pixels[i] & 0x0F) << 4 | (pixels[i + 1] & 0xF0) >> 4;  // Extract 4 bits for green and arrange
-        unsigned char b = (pixels[i + 1] & 0x0F) << 4;  // Extract 4 bits for blue
-        pixels[i] = (r << 4) | (g >> 4);  // Rearrange bytes to form new pixel
-        pixels[i + 1] = (g << 4) | b;
+void convert_argb4444_to_rgba4444(std::vector<u8> &pixelData)
+{
+    for (int i = 0; i < pixelData.size(); i += 2)
+    {
+        u16 argb4444Pixel = (u16)((pixelData[i + 1] << 8) | pixelData[i]);
+        u16 a = (u16)((argb4444Pixel & 0xF000) >> 12);
+        u16 r = (u16)((argb4444Pixel & 0x0F00) >> 8);
+        u16 g = (u16)((argb4444Pixel & 0x00F0) >> 4);
+        u16 b = (u16)(argb4444Pixel & 0x000F);
+
+        // Convert to RGBA4444
+        u16 rgba4444Pixel = (u16)((r << 12) | (g << 8) | (b << 4) | a);
+
+        // Store in RGBA4444 format
+        pixelData[i] = (u8)(rgba4444Pixel & 0xFF);
+        pixelData[i + 1] = (u8)((rgba4444Pixel >> 8) & 0xFF);
     }
 }
 
-//直接获取纹理格式数据，可以直接导入到游戏引擎使用
+// 直接获取纹理格式数据，可以直接导入到游戏引擎使用
 template <>
 std::vector<u8> wz::Property<wz::WzCanvas>::get_raw_data(std::array<u8, 4> iv)
 {
@@ -55,7 +64,6 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_raw_data(std::array<u8, 4> iv)
     }
 
     std::vector<u8> pixel_stream(uncompressed, uncompressed + uncompressed_len);
-    convert_argb4444_to_rgba4444(pixel_stream);
     switch (canvas.format)
     {
     case 1: // 16位argb4444
@@ -65,5 +73,6 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_raw_data(std::array<u8, 4> iv)
     default:
         break;
     }
+    convert_argb4444_to_rgba4444(pixel_stream);
     return pixel_stream;
 }

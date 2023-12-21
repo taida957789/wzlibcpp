@@ -24,7 +24,7 @@ int main()
 
     if (file.parse())
     {
-        wz::Node *node=file.get_root()->find_from_path(u"Back/login.img/back/10");
+        wz::Node *node=file.get_root()->find_from_path(u"Back/CakeVillageTW.img/back/3");
         // wz::Node *node = wz::Node::find_from_path(file.get_root(), );
         auto canvans = dynamic_cast<wz::Property<wz::WzCanvas> *>(node);
         std::ofstream outfile("./output.rgb", ios::binary);
