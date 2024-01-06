@@ -1,12 +1,11 @@
 cmake_minimum_required(VERSION 3.17)
 project(wzlibcpp)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 set(ZLIB_LIBRARY "zlib/lib")
 set(ZLIB_INCLUDE_DIR "zlib/include")
 
-set(CMAKE_CXX_FLAGS "-fpermissive")
 MESSAGE(${CMAKE_CXX_COMPILER_ID})
        
 find_package(ZLIB REQUIRED)
