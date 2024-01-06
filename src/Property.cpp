@@ -3,8 +3,8 @@
 
 enum PixelFormat
 {
-    FORMAT_RGBA8 = 5,
-    FORMAT_RGBA4444 = 6,
+    FORMAT_RGBA8,
+    FORMAT_RGBA4444,
 };
 
 // 直接获取纹理格式数据，可以直接导入到游戏引擎使用
