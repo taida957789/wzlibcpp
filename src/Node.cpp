@@ -302,6 +302,11 @@ wz::Node *wz::Node::get_child(const wz::wzstring &name)
     return nullptr;
 }
 
+wz::Node *wz::Node::get_child(std::string name)
+{
+    return get_child(std::u16string{name.begin(), name.end()});
+}
+
 wz::Node &wz::Node::operator[](const wz::wzstring &name)
 {
     return *get_child(name);
@@ -355,4 +360,9 @@ wz::Node *wz::Node::find_from_path(const std::u16string &path)
         }
     }
     return node == this ? NULL : node;
+}
+
+wz::Node *wz::Node::find_from_path(const std::string &path)
+{
+    return find_from_path(ustring(path));
 }
