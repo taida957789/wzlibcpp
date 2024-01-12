@@ -4,6 +4,3 @@
 [submodule "AES"]
 	path = AES
 	url = https://github.com/SeaniaTwix/AES
-[submodule "pystring"]
-	path = pystring
-	url = https://github.com/imageworks/pystring.git
