@@ -31,7 +31,7 @@ namespace wz
 
         Node *get_child(const wzstring &name);
 
-        Node *get_child(std::string name);
+        Node *get_child(const std::string &name);
 
         [[maybe_unused]] [[nodiscard]] virtual const WzMap &get_children() const;
 

@@ -302,7 +302,7 @@ wz::Node *wz::Node::get_child(const wz::wzstring &name)
     return nullptr;
 }
 
-wz::Node *wz::Node::get_child(std::string name)
+wz::Node *wz::Node::get_child(const std::string &name)
 {
     return get_child(std::u16string{name.begin(), name.end()});
 }
