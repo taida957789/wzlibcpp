@@ -1,6 +1,5 @@
 #include <cassert>
 #include <ranges>
-#include <algorithm>
 #include "Node.hpp"
 #include "Property.hpp"
 #include "File.hpp"
