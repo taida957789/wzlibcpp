@@ -35,6 +35,6 @@ int main()
         outfile.close();
         return 1;
     }
-    _sleep(90000000);
+    //_sleep(90000000);
     return 0;
 }
