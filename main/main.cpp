@@ -25,14 +25,6 @@ int main()
     if (file.parse())
     {
         wz::Node *node=file.get_root()->find_from_path(u"Map/Map1/101000000.img");
-        // wz::Node *node = wz::Node::find_from_path(file.get_root(), );
-        auto layer=node->children[u"0"];
-        auto canvans = dynamic_cast<wz::Property<wz::WzCanvas> *>(node);
-        std::ofstream outfile("./output.rgb", ios::binary);
-        auto buf = canvans->get_raw_data();
-        int size = buf.size();
-        outfile.write((char *)buf.data(), size);
-        outfile.close();
         return 1;
     }
     return 0;
