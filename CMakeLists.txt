@@ -15,10 +15,9 @@ include_directories(
         include
         include/wz
         mio/include
-        pystring
         ${ZLIB_INCLUDE_DIR})
 
-file(GLOB SOURCE_FILES src/*.cpp pystring/pystring.cpp)
+file(GLOB SOURCE_FILES src/*.cpp)
 file(GLOB AES_SOURCE_FILES AES/AES.cpp)
 
 add_library(wzlib ${SOURCE_FILES} ${AES_SOURCE_FILES})
