@@ -3,12 +3,7 @@ project(wzlibcpp)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(ZLIB_LIBRARY "zlib/lib")
-set(ZLIB_INCLUDE_DIR "zlib/include")
-
-MESSAGE(${CMAKE_CXX_COMPILER_ID})
-       
-find_package(ZLIB REQUIRED)
+add_subdirectory(zlib)
 
 include_directories(
         .
@@ -21,7 +16,7 @@ file(GLOB SOURCE_FILES src/*.cpp)
 file(GLOB AES_SOURCE_FILES AES/AES.cpp)
 
 add_library(wzlib ${SOURCE_FILES} ${AES_SOURCE_FILES})
-target_link_libraries(ZLIB::ZLIB)
+target_link_libraries(wzlib zlibstatic)
 
 
 project(wzlibtest)
