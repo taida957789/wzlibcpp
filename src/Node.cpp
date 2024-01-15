@@ -335,8 +335,7 @@ T pop(std::vector<T> &vec)
 
 wz::Node *wz::Node::find_from_path(const std::u16string &path)
 {
-    std::string s{path.begin(), path.end()};
-    auto next = std::views::split(s, '/') | std::views::common;
+    auto next = std::views::split(std::string{path.begin(), path.end()}, '/') | std::views::common;
     wz::Node *node = this;
     for (const auto &str : next)
     {
