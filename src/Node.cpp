@@ -1,5 +1,6 @@
 #include <cassert>
 #include <ranges>
+#include <memory>
 #include "Node.hpp"
 #include "Property.hpp"
 #include "File.hpp"
@@ -337,29 +338,22 @@ wz::Node *wz::Node::find_from_path(const std::u16string &path)
     std::string s{path.begin(), path.end()};
     auto next = std::views::split(s, '/') | std::views::common;
     wz::Node *node = this;
-    for (auto str : next)
+    for (const auto &str : next)
     {
-        for (const auto &it : *node)
+        node = node->get_child(std::string{str.begin(), str.end()});
+        if (node != nullptr)
         {
-            if (it.first == ustring(str))
+            if (node->type == wz::Type::Image)
             {
-                if (it.second[0]->type == wz::Type::Image)
-                {
-                    auto *image = new wz::Node();
-                    auto *dir = dynamic_cast<wz::Directory *>(it.second[0]);
-                    dir->parse_image(image);
-                    node = image;
-                    break;
-                }
-                else
-                {
-                    node = it.second[0];
-                    break;
-                }
+                auto *image = new wz::Node();
+                auto *dir = dynamic_cast<wz::Directory *>(node);
+                dir->parse_image(image);
+                node = image;
+                continue;
             }
         }
     }
-    return node == this ? NULL : node;
+    return node;
 }
 
 wz::Node *wz::Node::find_from_path(const std::string &path)
