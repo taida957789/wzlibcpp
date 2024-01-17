@@ -47,3 +47,21 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_raw_data(std::array<u8, 4> iv)
     std::vector<u8> pixel_stream(uncompressed, uncompressed + uncompressed_len);
     return pixel_stream;
 }
+
+//
+
+template <>
+std::vector<u8> wz::Property<wz::WzSound>::get_raw_data(std::array<u8, 4> iv)
+{
+    WzSound sound = get();
+    std::vector<u8> data_stream;
+
+    reader->set_position(sound.offset);
+    size_t end_offset = reader->get_position() + sound.size;
+
+    while (reader->get_position() < end_offset)
+    {
+        data_stream.push_back(static_cast<u8>(reader->read_byte()));
+    }
+    return data_stream;
+}
