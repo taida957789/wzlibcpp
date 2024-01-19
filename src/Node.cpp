@@ -351,6 +351,10 @@ wz::Node *wz::Node::find_from_path(const std::u16string &path)
                 continue;
             }
         }
+        else
+        {
+            return nullptr;
+        }
     }
     return node;
 }
