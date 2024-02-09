@@ -65,3 +65,10 @@ std::vector<u8> wz::Property<wz::WzSound>::get_raw_data(std::array<u8, 4> iv)
     }
     return data_stream;
 }
+
+template <>
+wz::Node *wz::Property<wz::WzUOL>::get_uol()
+{
+    auto path = get().uol;
+    return parent->find_from_path(path);
+}

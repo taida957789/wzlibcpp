@@ -337,23 +337,32 @@ wz::Node *wz::Node::find_from_path(const std::u16string &path)
 {
     auto next = std::views::split(std::string{path.begin(), path.end()}, '/') | std::views::common;
     wz::Node *node = this;
-    for (const auto &str : next)
+    for (const auto &s : next)
     {
-        node = node->get_child(std::string{str.begin(), str.end()});
-        if (node != nullptr)
+        auto str = std::string{s.begin(), s.end()};
+        if (str == "..")
         {
-            if (node->type == wz::Type::Image)
-            {
-                auto *image = new wz::Node();
-                auto *dir = dynamic_cast<wz::Directory *>(node);
-                dir->parse_image(image);
-                node = image;
-                continue;
-            }
+            node = node->parent;
+            continue;
         }
         else
         {
-            return nullptr;
+            node = node->get_child(str);
+            if (node != nullptr)
+            {
+                if (node->type == wz::Type::Image)
+                {
+                    auto *image = new wz::Node();
+                    auto *dir = dynamic_cast<wz::Directory *>(node);
+                    dir->parse_image(image);
+                    node = image;
+                    continue;
+                }
+            }
+            else
+            {
+                return nullptr;
+            }
         }
     }
     return node;
