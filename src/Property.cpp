@@ -70,5 +70,12 @@ template <>
 wz::Node *wz::Property<wz::WzUOL>::get_uol()
 {
     auto path = get().uol;
-    return parent->find_from_path(path);
+    auto uol_node = parent->find_from_path(path);
+    while (uol_node->type == wz::Type::UOL)
+    {
+        path = dynamic_cast<wz::Property<wz::WzUOL> *>(uol_node)->get().uol;
+        uol_node = uol_node->parent->find_from_path(path);
+    }
+
+    return uol_node;
 }
