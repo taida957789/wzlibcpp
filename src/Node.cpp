@@ -313,26 +313,6 @@ wz::Node &wz::Node::operator[](const wz::wzstring &name)
     return *get_child(name);
 }
 
-template <typename T>
-constexpr auto ustring(T iterable)
-{
-    return std::u16string{iterable.begin(), iterable.end()};
-}
-
-template <typename T>
-constexpr auto back(T iterable)
-{
-    return std::string{iterable.begin(), iterable.end()};
-}
-
-template <typename T>
-T pop(std::vector<T> &vec)
-{
-    auto last = vec.back();
-    vec.pop_back();
-    return last;
-}
-
 wz::Node *wz::Node::find_from_path(const std::u16string &path)
 {
     auto next = std::views::split(std::string{path.begin(), path.end()}, '/') | std::views::common;
@@ -370,5 +350,5 @@ wz::Node *wz::Node::find_from_path(const std::u16string &path)
 
 wz::Node *wz::Node::find_from_path(const std::string &path)
 {
-    return find_from_path(ustring(path));
+    return find_from_path(std::u16string{path.begin(), path.end()});
 }
