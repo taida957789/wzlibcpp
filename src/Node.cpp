@@ -345,6 +345,11 @@ wz::Node *wz::Node::find_from_path(const std::u16string &path)
             }
         }
     }
+    // 处理UOL
+    if (node->type == wz::Type::UOL)
+    {
+        node = dynamic_cast<wz::Property<wz::WzUOL> *>(node)->get_uol();
+    }
     return node;
 }
 
