@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(zlib)
 
+set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
+
 include_directories(
         .
         include
