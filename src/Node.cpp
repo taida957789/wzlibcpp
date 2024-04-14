@@ -355,10 +355,19 @@ wz::Node *wz::Node::find_from_path(const std::u16string &path)
             {
                 if (node->type == wz::Type::Image)
                 {
-                    auto *image = new wz::Node();
-                    auto *dir = dynamic_cast<wz::Directory *>(node);
-                    dir->parse_image(image);
-                    node = image;
+                    static std::map<std::u16string, wz::Node *> img_map;
+                    if (img_map.contains(node->path))
+                    {
+                        node = img_map[node->path];
+                    }
+                    else
+                    {
+                        auto *image = new wz::Node();
+                        auto *dir = dynamic_cast<wz::Directory *>(node);
+                        dir->parse_image(image);
+                        node = image;
+                        img_map[node->path] = node;
+                    }
                     continue;
                 }
             }
