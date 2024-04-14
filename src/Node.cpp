@@ -33,6 +33,8 @@ void wz::Node::appendChild(const wzstring &name, Node *node)
     assert(node);
     children[name].push_back(node);
     node->parent = this;
+    node->path = this->path + u"/" + name;
+    return;
 }
 
 const wz::WzMap &wz::Node::get_children() const
@@ -74,6 +76,8 @@ bool wz::Node::parse_property_list(Node *target, size_t offset)
         case 0:
         {
             auto *prop = new wz::Property<WzNull>(Type::Null, file);
+            prop->path = target->path + u"/" + name;
+
             target->appendChild(name, prop);
         }
         break;
@@ -82,12 +86,16 @@ bool wz::Node::parse_property_list(Node *target, size_t offset)
         case 2:
         {
             auto *prop = new wz::Property<u16>(Type::UnsignedShort, file, reader->read<u16>());
+            prop->path = target->path + u"/" + name;
+
             target->appendChild(name, prop);
         }
         break;
         case 3:
         {
             auto *prop = new wz::Property<i32>(Type::Int, file, reader->read_compressed_int());
+            prop->path = target->path + u"/" + name;
+
             target->appendChild(name, prop);
         }
         break;
@@ -97,11 +105,15 @@ bool wz::Node::parse_property_list(Node *target, size_t offset)
             if (float_type == 0x80)
             {
                 auto *prop = new wz::Property<f32>(Type::Float, file, reader->read<f32>());
+                prop->path = target->path + u"/" + name;
+
                 target->appendChild(name, prop);
             }
             else if (float_type == 0)
             {
                 auto *pProp = new wz::Property<f32>(Type::Float, file, 0.f);
+                pProp->path = target->path + u"/" + name;
+
                 target->appendChild(name, pProp);
             }
         }
@@ -109,12 +121,16 @@ bool wz::Node::parse_property_list(Node *target, size_t offset)
         case 5:
         {
             auto *prop = new wz::Property<f64>(Type::Double, file, reader->read<f64>());
+            prop->path = target->path + u"/" + name;
+
             target->appendChild(name, prop);
         }
         break;
         case 8:
         {
             auto *prop = new wz::Property<wzstring>(Type::String, file);
+            prop->path = target->path + u"/" + name;
+
             auto str = reader->read_string_block(offset);
             prop->set(str);
             target->appendChild(name, prop);
@@ -146,6 +162,7 @@ void wz::Node::parse_extended_prop(const wzstring &name, wz::Node *target, const
     if (strPropName == u"Property")
     {
         auto *prop = new Property<WzSubProp>(Type::SubProperty, file);
+        prop->path = target->path + u"/" + name;
         reader->skip(sizeof(u16));
         parse_property_list(prop, offset);
         target->appendChild(name, prop);
@@ -153,6 +170,7 @@ void wz::Node::parse_extended_prop(const wzstring &name, wz::Node *target, const
     else if (strPropName == u"Canvas")
     {
         auto *prop = new Property<WzCanvas>(Type::Canvas, file);
+        prop->path = target->path + u"/" + name;
         reader->skip(sizeof(u8));
         if (reader->read<u8>() == 1)
         {
@@ -167,6 +185,7 @@ void wz::Node::parse_extended_prop(const wzstring &name, wz::Node *target, const
     else if (strPropName == u"Shape2D#Vector2D")
     {
         auto *prop = new Property<WzVec2D>(Type::Vector2D, file);
+        prop->path = target->path + u"/" + name;
 
         auto x = reader->read_compressed_int();
         auto y = reader->read_compressed_int();
@@ -177,6 +196,7 @@ void wz::Node::parse_extended_prop(const wzstring &name, wz::Node *target, const
     else if (strPropName == u"Shape2D#Convex2D")
     {
         auto *prop = new Property<WzConvex>(Type::Convex2D, file);
+        prop->path = target->path + u"/" + name;
 
         int convexEntryCount = reader->read_compressed_int();
         for (int i = 0; i < convexEntryCount; i++)
@@ -189,6 +209,7 @@ void wz::Node::parse_extended_prop(const wzstring &name, wz::Node *target, const
     else if (strPropName == u"Sound_DX8")
     {
         auto *prop = new Property<WzSound>(Type::Sound, file);
+        prop->path = target->path + u"/" + name;
 
         prop->set(parse_sound_property());
 
@@ -198,6 +219,8 @@ void wz::Node::parse_extended_prop(const wzstring &name, wz::Node *target, const
     {
         reader->skip(sizeof(u8));
         auto *prop = new Property<WzUOL>(Type::UOL, file);
+        prop->path = target->path + u"/" + name;
+
         prop->set({reader->read_string_block(offset)});
         target->appendChild(name, prop);
     }
