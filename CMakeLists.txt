@@ -7,11 +7,14 @@ add_subdirectory(zlib)
 
 set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
 
+set(MIO_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/mio/include)
+
+set(WZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/wz ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
 include_directories(
-        .
-        include
-        include/wz
-        mio/include
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${WZLIB_INCLUDE_DIR}
+        ${MIO_INCLUDE_DIR}
         ${ZLIB_INCLUDE_DIR})
 
 file(GLOB SOURCE_FILES src/*.cpp)
@@ -20,7 +23,7 @@ file(GLOB AES_SOURCE_FILES AES/AES.cpp)
 add_library(wzlib ${SOURCE_FILES} ${AES_SOURCE_FILES})
 target_link_libraries(wzlib zlibstatic)
 
-
+if(WIN32)
 project(wzlibtest)
 file(GLOB LIB_FILES *.a ${ZLIB_LIBRARY}/*.a)
 
@@ -31,3 +34,4 @@ target_link_libraries(
         wzlib
         ${LIB_FILES}  
 )
+endif()
