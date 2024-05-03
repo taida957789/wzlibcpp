@@ -353,6 +353,11 @@ wz::Node *wz::Node::find_from_path(const std::u16string &path)
             node = node->get_child(str);
             if (node != nullptr)
             {
+                // 处理UOL
+                if (node->type == wz::Type::UOL)
+                {
+                    node = dynamic_cast<wz::Property<wz::WzUOL> *>(node)->get_uol();
+                }
                 if (node->type == wz::Type::Image)
                 {
                     static std::map<std::u16string, wz::Node *> img_map;
@@ -376,11 +381,6 @@ wz::Node *wz::Node::find_from_path(const std::u16string &path)
                 return nullptr;
             }
         }
-    }
-    // 处理UOL
-    if (node->type == wz::Type::UOL)
-    {
-        node = dynamic_cast<wz::Property<wz::WzUOL> *>(node)->get_uol();
     }
     return node;
 }
