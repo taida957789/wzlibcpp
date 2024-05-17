@@ -11,15 +11,14 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_raw_data(std::array<u8, 4> iv)
     reader->set_position(canvas.offset);
     size_t end_offset = reader->get_position() + canvas.size;
     unsigned long uncompressed_len = canvas.uncompressed_size;
-    u8 *uncompressed = new u8[uncompressed_len];
+    u8 uncompressed[uncompressed_len];
     if (!canvas.is_encrypted)
     {
         for (size_t i = 0; i < canvas.size; ++i)
         {
             data_stream.push_back(reader->read_byte());
         }
-        int len = data_stream.size();
-        uncompress(uncompressed, &uncompressed_len, data_stream.data(), data_stream.size());
+        uncompress(uncompressed, (unsigned long *)&uncompressed_len, data_stream.data(), data_stream.size());
     }
     else
     {
@@ -39,7 +38,6 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_raw_data(std::array<u8, 4> iv)
     }
 
     std::vector<u8> pixel_stream(uncompressed, uncompressed + uncompressed_len);
-    delete uncompressed;
     return pixel_stream;
 }
 
@@ -60,7 +58,7 @@ std::vector<u8> wz::Property<wz::WzSound>::get_raw_data(std::array<u8, 4> iv)
     return data_stream;
 }
 
-//get uol By uol node
+// get uol By uol node
 template <>
 wz::Node *wz::Property<wz::WzUOL>::get_uol()
 {
