@@ -4,21 +4,21 @@
 #include "Reader.hpp"
 #include "Keys.hpp"
 
-#if defined(__ANDROID__)
-wz::Reader::Reader(wz::MutableKey &new_key, std::vector<u8> buffer)
-    : cursor(0), key(new_key)
+wz::Reader::Reader(wz::MutableKey &new_key, unsigned char* buffer,unsigned int file_size)
+    : cursor(0), key(new_key),file_size(file_size)
 {
     mmap = buffer;
 }
-#else
+
+#ifndef __ANDROID__
 wz::Reader::Reader(wz::MutableKey &new_key, const char *file_path)
     : cursor(0), key(new_key)
 {
     std::error_code error_code;
     mmap = mio::make_mmap_source<decltype(file_path)>(file_path, error_code);
 }
-#endif
 
+#endif
 u8 wz::Reader::read_byte()
 {
     return mmap[cursor++];
@@ -159,7 +159,11 @@ wz::wzstring wz::Reader::read_wz_string()
 
 mio::mmap_source::size_type wz::Reader::size() const
 {
+#ifdef __ANDROID__
+    return file_size;
+#else
     return mmap.size();
+#endif
 }
 
 bool wz::Reader::is_wz_image()

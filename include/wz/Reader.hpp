@@ -12,12 +12,10 @@ namespace wz
     class Reader final
     {
     public:
-#if defined(__ANDROID__)
-        explicit Reader(wz::MutableKey &new_key, std::vector<u8> buffer);
-#else
+        explicit Reader(wz::MutableKey &new_key, unsigned char*buffer,unsigned int file_size);
+#ifndef __ANDROID__
         explicit Reader(wz::MutableKey &new_key, const char *file_path);
 #endif
-
         template <typename T>
         [[nodiscard]] T read()
         {
@@ -75,7 +73,8 @@ namespace wz
 
         size_t cursor = 0;
 #if defined(__ANDROID__)
-        std::vector<u8> mmap;
+        unsigned char *mmap;
+        unsigned int file_size;
 #else
         mio::mmap_source mmap;
 #endif

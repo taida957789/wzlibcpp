@@ -3,16 +3,16 @@
 #include "Wz.hpp"
 #include "Directory.hpp"
 
-#if defined(__ANDROID__)
-[[maybe_unused]] wz::File::File(const std::initializer_list<u8> &new_iv, std::vector<u8> buffer)
-    : reader(Reader(key, buffer)), root(new Node(Type::NotSet, this)), key(), iv(nullptr)
+[[maybe_unused]] wz::File::File(const std::initializer_list<u8> &new_iv, unsigned char*buffer,unsigned int file_size)
+    : reader(Reader(key, buffer,file_size)), root(new Node(Type::NotSet, this)), key(), iv(nullptr)
 {
     iv = new u8[4];
     memcpy(iv, new_iv.begin(), 4);
     init_key();
     reader.set_key(key);
 }
-#else
+
+#ifndef __ANDROID__
 [[maybe_unused]] wz::File::File(const std::initializer_list<u8> &new_iv, const char *path)
     : reader(Reader(key, path)), root(new Node(Type::NotSet, this)), key(), iv(nullptr)
 {
@@ -29,7 +29,6 @@
     reader.set_key(key);
 }
 #endif
-
 wz::File::~File()
 {
     delete[] iv;
