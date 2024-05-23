@@ -3,7 +3,7 @@
 
 // get ARGB4444 piexl,ARGB8888 piexl and others.....
 template <>
-std::vector<u8> wz::Property<wz::WzCanvas>::get_raw_data(std::array<u8, 4> iv)
+std::vector<u8> wz::Property<wz::WzCanvas>::get_raw_data()
 {
     WzCanvas canvas = get();
 
@@ -44,7 +44,7 @@ std::vector<u8> wz::Property<wz::WzCanvas>::get_raw_data(std::array<u8, 4> iv)
 
 // get Sound node raw data
 template <>
-std::vector<u8> wz::Property<wz::WzSound>::get_raw_data(std::array<u8, 4> iv)
+std::vector<u8> wz::Property<wz::WzSound>::get_raw_data()
 {
     WzSound sound = get();
     std::vector<u8> data_stream;

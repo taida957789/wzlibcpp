@@ -22,7 +22,8 @@ namespace wz
             T result;
             [[likely]]
             if (wz_size == 0)
-            { // Read from file
+            {
+                // Read from file
                 result = *reinterpret_cast<T *>(&mmap[cursor]);
             }
             else
