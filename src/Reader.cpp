@@ -4,11 +4,6 @@
 #include "Reader.hpp"
 #include "Keys.hpp"
 
-wz::Reader::Reader(wz::MutableKey &new_key, unsigned char *wz_buf, unsigned int wz_size)
-    : cursor(0), key(new_key), wz_buf(wz_buf), wz_size(wz_size)
-{
-}
-
 wz::Reader::Reader(wz::MutableKey &new_key, const char *file_path)
     : cursor(0), key(new_key)
 {
@@ -18,15 +13,7 @@ wz::Reader::Reader(wz::MutableKey &new_key, const char *file_path)
 
 u8 wz::Reader::read_byte()
 {
-    [[likely]]
-    if (wz_size == 0)
-    {
-        return mmap[cursor++];
-    }
-    else
-    {
-        return wz_buf[cursor++];
-    }
+    return mmap[cursor++];
 }
 
 [[maybe_unused]] std::vector<u8> wz::Reader::read_bytes(const size_t &len)
@@ -164,15 +151,7 @@ wz::wzstring wz::Reader::read_wz_string()
 
 mio::mmap_source::size_type wz::Reader::size() const
 {
-    [[likely]]
-    if (wz_size == 0)
-    {
-        return mmap.size();
-    }
-    else
-    {
-        return wz_size;
-    }
+    return mmap.size();
 }
 
 bool wz::Reader::is_wz_image()
