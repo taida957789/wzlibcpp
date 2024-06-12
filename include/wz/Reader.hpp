@@ -17,8 +17,7 @@ namespace wz
         template <typename T>
         [[nodiscard]] T read()
         {
-            T result;
-            result = *reinterpret_cast<T *>(&mmap[cursor]);
+            T result = *reinterpret_cast<T *>(&mmap[cursor]);
             cursor += sizeof(decltype(result));
             return result;
         }
