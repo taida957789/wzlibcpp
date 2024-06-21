@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <string>
 
@@ -15,7 +15,7 @@ namespace wz
     class File;
 
     typedef std::vector<Node *> WzList;
-    typedef std::map<wzstring, WzList> WzMap;
+    typedef std::unordered_map<wzstring, WzList> WzMap;
 
     class Node
     {

@@ -151,7 +151,6 @@ bool wz::Node::parse_property_list(Node *target, size_t offset)
         }
         }
     }
-
     return true;
 }
 
@@ -360,18 +359,18 @@ wz::Node *wz::Node::find_from_path(const std::u16string &path)
                 }
                 if (node->type == wz::Type::Image)
                 {
-                    static std::map<std::u16string, wz::Node *> img_map;
-                    if (img_map.contains(node->path))
+                    static std::unordered_map<wz::Node *, wz::Node *> img_map;
+                    if (img_map.contains(node))
                     {
-                        node = img_map[node->path];
+                        node = img_map[node];
                     }
                     else
                     {
                         auto *image = new wz::Node();
                         auto *dir = dynamic_cast<wz::Directory *>(node);
                         dir->parse_image(image);
+                        img_map[node] = image;
                         node = image;
-                        img_map[node->path] = node;
                     }
                     continue;
                 }
