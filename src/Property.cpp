@@ -1,5 +1,7 @@
+#include <zlib.h>
 #include "Property.hpp"
 #include "Types.hpp"
+
 
 // get ARGB4444 piexl,ARGB8888 piexl and others.....
 template <>
