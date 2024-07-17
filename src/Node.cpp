@@ -337,12 +337,12 @@ wz::Node &wz::Node::operator[](const wz::wzstring &name)
 
 wz::Node *wz::Node::find_from_path(const std::u16string &path)
 {
-    auto next = std::views::split(std::string{path.begin(), path.end()}, '/') | std::views::common;
+    auto next = std::views::split(path, u'/') | std::views::common;
     wz::Node *node = this;
     for (const auto &s : next)
     {
-        auto str = std::string{s.begin(), s.end()};
-        if (str == "..")
+        auto str = std::u16string{s.begin(), s.end()};
+        if (str == u"..")
         {
             node = node->parent;
             continue;
