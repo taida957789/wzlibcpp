@@ -359,17 +359,17 @@ wz::Node *wz::Node::find_from_path(const std::u16string &path)
                 }
                 if (node->type == wz::Type::Image)
                 {
-                    static std::unordered_map<wz::Node *, wz::Node *> img_map;
-                    if (img_map.contains(node))
+                    static std::unordered_map<wz::Node *, wz::Node *> cache;
+                    if (cache.contains(node))
                     {
-                        node = img_map[node];
+                        node = cache[node];
                     }
                     else
                     {
                         auto *image = new wz::Node();
                         auto *dir = dynamic_cast<wz::Directory *>(node);
                         dir->parse_image(image);
-                        img_map[node] = image;
+                        cache[node] = image;
                         node = image;
                     }
                     continue;
