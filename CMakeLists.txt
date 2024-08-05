@@ -5,17 +5,11 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(zlib)
 
-set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
-
-set(MIO_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/mio/include)
-
-set(WZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/wz ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-include_directories(
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${WZLIB_INCLUDE_DIR}
-        ${MIO_INCLUDE_DIR}
-        ${ZLIB_INCLUDE_DIR})
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/zlib")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/mio/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/wz")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 file(GLOB SOURCE_FILES src/*.cpp)
 file(GLOB AES_SOURCE_FILES AES/AES.cpp)
@@ -31,6 +25,5 @@ target_link_libraries(
         wzlibtest
         PRIVATE
         wzlib
-        zlibstatic 
 )
 endif()
