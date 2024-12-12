@@ -5,8 +5,6 @@
 
 namespace wz {
 
-    using wzstring = std::u16string;
-
     struct WzNull {
     };
 
@@ -18,7 +16,7 @@ namespace wz {
 
     struct WzUOL {
         [[maybe_unused]]
-        wzstring uol;
+        std::wstring uol;
     };
 
     struct WzCanvas {

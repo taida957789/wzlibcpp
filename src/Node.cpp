@@ -28,12 +28,12 @@ wz::Node::~Node()
     }
 }
 
-void wz::Node::appendChild(const wzstring &name, Node *node)
+void wz::Node::appendChild(const std::wstring &name, Node *node)
 {
     assert(node);
     children[name].push_back(node);
     node->parent = this;
-    node->path = this->path + u"/" + name;
+    node->path = this->path + L"/" + name;
     return;
 }
 
@@ -76,7 +76,7 @@ bool wz::Node::parse_property_list(Node *target, size_t offset)
         case 0:
         {
             auto *prop = new wz::Property<WzNull>(Type::Null, file);
-            prop->path = target->path + u"/" + name;
+            prop->path = target->path + L"/" + name;
 
             target->appendChild(name, prop);
         }
@@ -86,7 +86,7 @@ bool wz::Node::parse_property_list(Node *target, size_t offset)
         case 2:
         {
             auto *prop = new wz::Property<u16>(Type::UnsignedShort, file, reader->read<u16>());
-            prop->path = target->path + u"/" + name;
+            prop->path = target->path + L"/" + name;
 
             target->appendChild(name, prop);
         }
@@ -94,7 +94,7 @@ bool wz::Node::parse_property_list(Node *target, size_t offset)
         case 3:
         {
             auto *prop = new wz::Property<i32>(Type::Int, file, reader->read_compressed_int());
-            prop->path = target->path + u"/" + name;
+            prop->path = target->path + L"/" + name;
 
             target->appendChild(name, prop);
         }
@@ -105,14 +105,14 @@ bool wz::Node::parse_property_list(Node *target, size_t offset)
             if (float_type == 0x80)
             {
                 auto *prop = new wz::Property<f32>(Type::Float, file, reader->read<f32>());
-                prop->path = target->path + u"/" + name;
+                prop->path = target->path + L"/" + name;
 
                 target->appendChild(name, prop);
             }
             else if (float_type == 0)
             {
                 auto *pProp = new wz::Property<f32>(Type::Float, file, 0.f);
-                pProp->path = target->path + u"/" + name;
+                pProp->path = target->path + L"/" + name;
 
                 target->appendChild(name, pProp);
             }
@@ -121,15 +121,15 @@ bool wz::Node::parse_property_list(Node *target, size_t offset)
         case 5:
         {
             auto *prop = new wz::Property<f64>(Type::Double, file, reader->read<f64>());
-            prop->path = target->path + u"/" + name;
+            prop->path = target->path + L"/" + name;
 
             target->appendChild(name, prop);
         }
         break;
         case 8:
         {
-            auto *prop = new wz::Property<wzstring>(Type::String, file);
-            prop->path = target->path + u"/" + name;
+            auto *prop = new wz::Property<std::wstring>(Type::String, file);
+            prop->path = target->path + L"/" + name;
 
             auto str = reader->read_string_block(offset);
             prop->set(str);
@@ -154,22 +154,22 @@ bool wz::Node::parse_property_list(Node *target, size_t offset)
     return true;
 }
 
-void wz::Node::parse_extended_prop(const wzstring &name, wz::Node *target, const size_t &offset)
+void wz::Node::parse_extended_prop(const std::wstring &name, wz::Node *target, const size_t &offset)
 {
     auto strPropName = reader->read_string_block(offset);
 
-    if (strPropName == u"Property")
+    if (strPropName == L"Property")
     {
         auto *prop = new Property<WzSubProp>(Type::SubProperty, file);
-        prop->path = target->path + u"/" + name;
+        prop->path = target->path + L"/" + name;
         reader->skip(sizeof(u16));
         parse_property_list(prop, offset);
         target->appendChild(name, prop);
     }
-    else if (strPropName == u"Canvas")
+    else if (strPropName == L"Canvas")
     {
         auto *prop = new Property<WzCanvas>(Type::Canvas, file);
-        prop->path = target->path + u"/" + name;
+        prop->path = target->path + L"/" + name;
         reader->skip(sizeof(u8));
         if (reader->read<u8>() == 1)
         {
@@ -181,10 +181,10 @@ void wz::Node::parse_extended_prop(const wzstring &name, wz::Node *target, const
 
         target->appendChild(name, prop);
     }
-    else if (strPropName == u"Shape2D#Vector2D")
+    else if (strPropName == L"Shape2D#Vector2D")
     {
         auto *prop = new Property<WzVec2D>(Type::Vector2D, file);
-        prop->path = target->path + u"/" + name;
+        prop->path = target->path + L"/" + name;
 
         auto x = reader->read_compressed_int();
         auto y = reader->read_compressed_int();
@@ -192,10 +192,10 @@ void wz::Node::parse_extended_prop(const wzstring &name, wz::Node *target, const
 
         target->appendChild(name, prop);
     }
-    else if (strPropName == u"Shape2D#Convex2D")
+    else if (strPropName == L"Shape2D#Convex2D")
     {
         auto *prop = new Property<WzConvex>(Type::Convex2D, file);
-        prop->path = target->path + u"/" + name;
+        prop->path = target->path + L"/" + name;
 
         int convexEntryCount = reader->read_compressed_int();
         for (int i = 0; i < convexEntryCount; i++)
@@ -205,20 +205,20 @@ void wz::Node::parse_extended_prop(const wzstring &name, wz::Node *target, const
 
         target->appendChild(name, prop);
     }
-    else if (strPropName == u"Sound_DX8")
+    else if (strPropName == L"Sound_DX8")
     {
         auto *prop = new Property<WzSound>(Type::Sound, file);
-        prop->path = target->path + u"/" + name;
+        prop->path = target->path + L"/" + name;
 
         prop->set(parse_sound_property());
 
         target->appendChild(name, prop);
     }
-    else if (strPropName == u"UOL")
+    else if (strPropName == L"UOL")
     {
         reader->skip(sizeof(u8));
         auto *prop = new Property<WzUOL>(Type::UOL, file);
-        prop->path = target->path + u"/" + name;
+        prop->path = target->path + L"/" + name;
 
         prop->set({reader->read_string_block(offset)});
         target->appendChild(name, prop);
@@ -316,7 +316,7 @@ u8 *wz::Node::get_iv() const
     return file->iv;
 }
 
-wz::Node *wz::Node::get_child(const wz::wzstring &name)
+wz::Node *wz::Node::get_child(const std::wstring &name)
 {
     if (auto it = children.find(name); it != children.end())
     {
@@ -327,22 +327,22 @@ wz::Node *wz::Node::get_child(const wz::wzstring &name)
 
 wz::Node *wz::Node::get_child(const std::string &name)
 {
-    return get_child(std::u16string{name.begin(), name.end()});
+    return get_child(name);
 }
 
-wz::Node &wz::Node::operator[](const wz::wzstring &name)
+wz::Node &wz::Node::operator[](const std::wstring &name)
 {
     return *get_child(name);
 }
 
-wz::Node *wz::Node::find_from_path(const std::u16string &path)
+wz::Node *wz::Node::find_from_path(const std::wstring &path)
 {
-    auto next = std::views::split(path, u'/') | std::views::common;
+    auto next = std::views::split(path, L'/') | std::views::common;
     wz::Node *node = this;
     for (const auto &s : next)
     {
-        auto str = std::u16string{s.begin(), s.end()};
-        if (str == u"..")
+        auto str = std::wstring{s.begin(), s.end()};
+        if (str == L"..")
         {
             node = node->parent;
             continue;
@@ -386,5 +386,5 @@ wz::Node *wz::Node::find_from_path(const std::u16string &path)
 
 wz::Node *wz::Node::find_from_path(const std::string &path)
 {
-    return find_from_path(std::u16string{path.begin(), path.end()});
+    return find_from_path(path);
 }

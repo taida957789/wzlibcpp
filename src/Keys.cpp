@@ -18,7 +18,7 @@ void wz::MutableKey::ensure_key_size(size_t size)
 {
     size = static_cast<i32>(ceil(1.0 * size / batch_size) * batch_size);
     decltype(keys) new_keys;
-    new_keys.reserve(size);
+    new_keys.resize(size);
     if (*reinterpret_cast<i32 *>(iv.data()) == 0)
     {
         keys = new_keys;

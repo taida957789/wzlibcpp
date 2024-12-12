@@ -25,10 +25,10 @@ wz::File::~File()
     delete root;
 }
 
-bool wz::File::parse(const wzstring &name)
+bool wz::File::parse(const std::wstring &name)
 {
     auto magic = reader.read_string(4);
-    if (magic != u"PKG1")
+    if (magic != L"PKG1")
         return false;
 
     auto fileSize = reader.read<u64>();
@@ -82,7 +82,7 @@ bool wz::File::parse_directories(wz::Node *node)
     {
         auto type = reader.read_byte();
         size_t prevPos = 0;
-        wzstring name;
+        std::wstring name;
 
         if (type == 1)
         {
@@ -184,11 +184,11 @@ wz::Node *wz::File::get_root() const
 void wz::File::init_key()
 {
     std::vector<u8> aes_key_v(32);
-    memcpy(aes_key_v.data(), wz::AesKey2, 32);
+    memcpy(aes_key_v.data(), wz::AesKey1, 32);
     key = MutableKey({iv[0], iv[1], iv[2], iv[3]}, aes_key_v);
 }
 
-wz::Node &wz::File::get_child(const wzstring &name)
+wz::Node &wz::File::get_child(const std::wstring &name)
 {
     return *root->get_child(name);
 }

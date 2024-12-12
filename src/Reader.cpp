@@ -3,6 +3,7 @@
 #include <codecvt>
 #include "Reader.hpp"
 #include "Keys.hpp"
+#include "NumTypes.hpp"
 
 wz::Reader::Reader(wz::MutableKey &new_key, const char *file_path)
     : cursor(0), key(new_key)
@@ -29,9 +30,9 @@ u8 wz::Reader::read_byte()
     return result;
 }
 
-wz::wzstring wz::Reader::read_string()
+std::wstring wz::Reader::read_string()
 {
-    wz::wzstring result{};
+    std::wstring result{};
 
     while (true)
     {
@@ -44,9 +45,9 @@ wz::wzstring wz::Reader::read_string()
     return result;
 }
 
-wz::wzstring wz::Reader::read_string(const size_t &len)
+std::wstring wz::Reader::read_string(const size_t &len)
 {
-    wz::wzstring result{};
+    std::wstring result{};
 
     for (int i = 0; i < len; ++i)
     {
@@ -85,7 +86,7 @@ i16 wz::Reader::read_i16()
     return result;
 }
 
-wz::wzstring wz::Reader::read_wz_string()
+std::wstring wz::Reader::read_wz_string()
 {
     auto len8 = read<i8>();
 
@@ -105,7 +106,7 @@ wz::wzstring wz::Reader::read_wz_string()
             return {};
         }
 
-        wz::wzstring result{};
+        std::wstring result{};
 
         for (int i = 0; i < len; ++i)
         {
@@ -135,7 +136,7 @@ wz::wzstring wz::Reader::read_wz_string()
         return {};
     }
 
-    wz::wzstring result{};
+    std::wstring result{};
 
     for (int n = 0; n < len; ++n)
     {
@@ -158,14 +159,14 @@ bool wz::Reader::is_wz_image()
 {
     if (read<u8>() != 0x73)
         return false;
-    if (read_wz_string() != u"Property")
+    if (read_wz_string() != L"Property")
         return false;
     if (read<u16>() != 0)
         return false;
     return true;
 }
 
-wz::wzstring wz::Reader::read_string_block(const size_t &offset)
+std::wstring wz::Reader::read_string_block(const size_t &offset)
 {
     switch (read<u8>())
     {
@@ -185,7 +186,7 @@ wz::wzstring wz::Reader::read_string_block(const size_t &offset)
     return {};
 }
 
-wz::wzstring wz::Reader::read_wz_string_from_offset(const size_t &offset)
+std::wstring wz::Reader::read_wz_string_from_offset(const size_t &offset)
 {
     auto prev = get_position();
     set_position(offset);

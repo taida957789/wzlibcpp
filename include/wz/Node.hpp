@@ -15,7 +15,7 @@ namespace wz
     class File;
 
     typedef std::vector<Node *> WzList;
-    typedef std::unordered_map<wzstring, WzList> WzMap;
+    typedef std::unordered_map<std::wstring, WzList> WzMap;
 
     class Node
     {
@@ -25,11 +25,11 @@ namespace wz
 
         virtual ~Node();
 
-        Node &operator[](const wzstring &name);
+        Node &operator[](const std::wstring &name);
 
-        virtual void appendChild(const wzstring &name, Node *node);
+        virtual void appendChild(const std::wstring &name, Node *node);
 
-        Node *get_child(const wzstring &name);
+        Node *get_child(const std::wstring &name);
 
         Node *get_child(const std::string &name);
 
@@ -47,7 +47,7 @@ namespace wz
 
         [[nodiscard]] bool is_property() const;
 
-        Node *find_from_path(const std::u16string &path);
+        Node *find_from_path(const std::wstring &path);
 
         Node *find_from_path(const std::string &path);
 
@@ -60,10 +60,10 @@ namespace wz
         File *file;
         Reader *reader = nullptr;
 
-        std::u16string path = u"";
+        std::wstring path = L"";
 
         bool parse_property_list(Node *target, size_t offset);
-        void parse_extended_prop(const wzstring &name, Node *target, const size_t &offset);
+        void parse_extended_prop(const std::wstring &name, Node *target, const size_t &offset);
         WzCanvas parse_canvas_property();
         WzSound parse_sound_property();
 

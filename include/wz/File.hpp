@@ -19,10 +19,10 @@ namespace wz
 
         ~File();
 
-        [[maybe_unused]] bool parse(const wzstring &name = u"");
+        [[maybe_unused]] bool parse(const std::wstring &name = L"");
 
         [[maybe_unused]] [[nodiscard]] Node *get_root() const;
-        Node &get_child(const wzstring &name);
+        Node &get_child(const std::wstring &name);
 
         MutableKey key;
 
